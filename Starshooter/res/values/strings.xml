@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, StarshooterActivity!</string>
-    <string name="app_name">Starshooter</string>
-
+  <string name="app_name">Starshooter</string>
+  
+  <string name="main_menu_connect">Connect</string>
+  <string name="main_menu_settings">Settings</string>
+  <string name="main_menu_about">About</string>
+  <!--  Obsolet <string name="main_menu_exit">Quit</string> -->
+  
+  <string name="select_masterSlave_title">Connection type?</string>
+  <string name="select_masterSlave_master">master</string>
+  <string name="select_masterSlave_slave">slave</string>
+  
+  <string name="prompt4ip_title">Master´s IP?</string>
+  <string name="prompt4ip_hint">master ip adress</string>
+  <string name="prompt4ip_continue">connect</string>
+  <string name="prompt4ip_abort">abort</string>
+  <string name="prompt4ip_errInvalid">given IP is invalid</string>
+  
+  
 </resources>
