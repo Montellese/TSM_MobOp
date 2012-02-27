@@ -15,7 +15,7 @@
   <string name="prompt4ip_hint">master ip adress</string>
   <string name="prompt4ip_continue">connect</string>
   <string name="prompt4ip_abort">abort</string>
-  <string name="prompt4ip_errInvalid">given IP is invalid</string>
+  <string name="prompt4ip_errInvalid">this is not a valid ip</string>
   
   
 </resources>

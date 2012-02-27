@@ -9,8 +9,10 @@ import android.R.bool;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -39,17 +41,20 @@ public class StarshooterMain extends Activity
   private ArrayList<ListObject> listItems;
 
   private String[] mmenuItems;
-
+  
+  
   /** `prompt 4 master ip'-dialog is in ready state, prepared for user input **/
   private final short PROMPT4MASTERIP_STATE_READY = 0;
+  
   /** `prompt 4 master ip'-dialog is in waiting state, connection to master is in progress **/
   private final short PROMPT4MASTERIP_STATE_WAITING = 1;
+  
   /** current state of `prompt 4 master ip'-dialog **/
   private short prompt4masterIp_state = PROMPT4MASTERIP_STATE_READY;
   
+  private Playground pg;
   
   // Connection settings
-  
   /** defines if we are master **/
   private boolean con_master=true;
   
@@ -137,7 +142,13 @@ public class StarshooterMain extends Activity
           {
             // master
             case 0 :
-              
+              /*Intent intent = new Intent();
+              intent.setComponent(new ComponentName("Playground", "mse.tsm.mobop.starshooter"));
+              startActivity(intent);/*
+               pg = new Playground();
+               pg.startActivity(getIntent());*/
+                Intent i = new Intent(StarshooterMain.this, Playground.class);
+                StarshooterMain.this.startActivity(i);
               break;
               
             // slave
@@ -165,17 +176,51 @@ public class StarshooterMain extends Activity
         final Button button = (Button) dialog.findViewById(R.id.ripp_button);
         final ProgressBar pb= (ProgressBar) dialog.findViewById(R.id.ripp_connectionProgress);
         
+        dialog.setOnKeyListener(new DialogInterface.OnKeyListener()
+        {
+          
+          @Override
+          public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
+          {
+            if(event.getAction() == KeyEvent.ACTION_DOWN)
+            {
+              if(keyCode == KeyEvent.KEYCODE_BACK)
+              {
+                pb.setVisibility(View.INVISIBLE);
+                input.setEnabled(true);
+                input.requestFocus();
+                button.setText(R.string.prompt4ip_continue);
+                prompt4masterIp_state = PROMPT4MASTERIP_STATE_READY;
+                return false;
+              }
+            }
+            return false;
+          }
+        });
+        
         input.setOnKeyListener(new OnKeyListener()
         {
           
           @Override
           public boolean onKey(View v, int keyCode, KeyEvent event)
           {
-            if( (event.getAction() == KeyEvent.ACTION_DOWN) && 
-                (keyCode == KeyEvent.KEYCODE_ENTER) )
+            if(event.getAction() == KeyEvent.ACTION_DOWN)
             {
-              button.performClick();
-              return true;
+              if(keyCode == KeyEvent.KEYCODE_ENTER)
+              {
+                button.performClick();
+                return true;
+              }/*else if(keyCode == KeyEvent.KEYCODE_BACK)
+              {
+                Toast.makeText(getApplicationContext(),"here", Toast.LENGTH_SHORT).show();
+                
+                pb.setVisibility(View.INVISIBLE);
+                input.setEnabled(true);
+                input.requestFocus();
+                button.setText(R.string.prompt4ip_continue);
+                prompt4masterIp_state = PROMPT4MASTERIP_STATE_READY;
+                return false;
+              }*/
             }
             return false;
           }
@@ -199,10 +244,13 @@ public class StarshooterMain extends Activity
                   button.setText(R.string.prompt4ip_abort);
                   button.requestFocus();
                   prompt4masterIp_state = PROMPT4MASTERIP_STATE_WAITING;
-                  /// TODO: Start trying to connect, then start finish(); to close dialog and reset form
+                  /// TODO: Start trying to connect, then start finish(); and close dialog, make sure dialog is as inited
+                  
                 }
                 else
-                  Toast.makeText(getApplicationContext(), "No matchin", Toast.LENGTH_SHORT).show();
+                {
+                  Toast.makeText(getApplicationContext(), getResources().getString(R.string.prompt4ip_errInvalid).toString(), Toast.LENGTH_SHORT).show();
+                }
                 break;
               case PROMPT4MASTERIP_STATE_WAITING :
                 pb.setVisibility(View.INVISIBLE);
