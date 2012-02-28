@@ -29,6 +29,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import mse.tsm.mobop.starshooter.ListObject;
+
 public class StarshooterMain extends Activity
 {
 
@@ -179,7 +181,6 @@ public class StarshooterMain extends Activity
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener()
         {
           
-          @Override
           public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
           {
             if(event.getAction() == KeyEvent.ACTION_DOWN)
@@ -201,7 +202,6 @@ public class StarshooterMain extends Activity
         input.setOnKeyListener(new OnKeyListener()
         {
           
-          @Override
           public boolean onKey(View v, int keyCode, KeyEvent event)
           {
             if(event.getAction() == KeyEvent.ACTION_DOWN)
@@ -228,8 +228,6 @@ public class StarshooterMain extends Activity
         
         button.setOnClickListener(new OnClickListener()
         {
-          
-          @Override
           public void onClick(View arg0)
           {
             switch( prompt4masterIp_state )
