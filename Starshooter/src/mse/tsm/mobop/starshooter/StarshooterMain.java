@@ -29,14 +29,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import mse.tsm.mobop.starshooter.ListObject;
-
 public class StarshooterMain extends Activity
 {
 
   ListView list;
 
   MenuAdapter adapter;
+  
+  
   
   final int DIALOG_SLAVE_PROMPT4MASTER_IP = 1;
 
@@ -65,7 +65,7 @@ public class StarshooterMain extends Activity
   
     
 
-  @Override
+  //@Override
   public void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
@@ -150,6 +150,7 @@ public class StarshooterMain extends Activity
                pg = new Playground();
                pg.startActivity(getIntent());*/
                 Intent i = new Intent(StarshooterMain.this, Playground.class);
+                //Bundle b = new Bundle(); b.putI
                 StarshooterMain.this.startActivity(i);
               break;
               
@@ -180,7 +181,7 @@ public class StarshooterMain extends Activity
         
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener()
         {
-          
+          //@Override
           public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
           {
             if(event.getAction() == KeyEvent.ACTION_DOWN)
@@ -201,7 +202,7 @@ public class StarshooterMain extends Activity
         
         input.setOnKeyListener(new OnKeyListener()
         {
-          
+          @Override
           public boolean onKey(View v, int keyCode, KeyEvent event)
           {
             if(event.getAction() == KeyEvent.ACTION_DOWN)
@@ -228,6 +229,7 @@ public class StarshooterMain extends Activity
         
         button.setOnClickListener(new OnClickListener()
         {
+          //@Override
           public void onClick(View arg0)
           {
             switch( prompt4masterIp_state )
@@ -272,7 +274,7 @@ public class StarshooterMain extends Activity
   }
   
 
-  @Override
+  //@Override
   public void onDestroy()
   {
     list.setAdapter(null);
@@ -302,7 +304,7 @@ class IPchecker{
   
   private void validate()
   {
-    Pattern p = Pattern.compile("(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})");
+    Pattern p = Pattern.compile("^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$");
     Matcher m = p.matcher(input);
     
     if( m.find() )

@@ -8,17 +8,22 @@ import android.view.MotionEvent;
 
 public class Playground extends Activity {
   
-    private GLSurfaceView mGLView;
+  private ShipState myShip, opponentShip;
   
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
-        // Create a GLSurfaceView instance and set it
-        // as the ContentView for this Activity
-        mGLView = new PlaygroundSurfaceView(this);
-        setContentView(mGLView);
-    }
+  private GLSurfaceView mGLView;
+  
+  
+  
+  @Override
+  public void onCreate(Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
+    
+    // Create a GLSurfaceView instance and set it
+    // as the ContentView for this Activity
+    mGLView = new PlaygroundSurfaceView(this,myShip,opponentShip);
+    setContentView(mGLView);
+  }
     
     @Override
     protected void onPause() {
@@ -45,13 +50,13 @@ class PlaygroundSurfaceView extends GLSurfaceView {
   private PlaygroundRenderer mRenderer;
   private float mPreviousX;
   private float mPreviousY;
-    public PlaygroundSurfaceView(Context context){
+    public PlaygroundSurfaceView(Context context, ShipState myShip, ShipState opponentShip){
       super(context);
       // Create an OpenGL ES 2.0 context.
       setEGLContextClientVersion(2);
           
       // set the mRenderer member
-      mRenderer = new PlaygroundRenderer();
+      mRenderer = new PlaygroundRenderer(myShip, opponentShip);
       setRenderer(mRenderer);
       
       // Render the view only when there is a change

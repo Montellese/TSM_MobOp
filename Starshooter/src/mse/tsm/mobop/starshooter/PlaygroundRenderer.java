@@ -14,6 +14,8 @@ import android.os.SystemClock;
 
 public class PlaygroundRenderer implements GLSurfaceView.Renderer
 {
+  private ShipState myShip, opponentShip;
+  
   private FloatBuffer triangleVB;
   
   private final String vertexShaderCode = 
@@ -44,6 +46,12 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
   private float[] mVMatrix = new float[16];
   private float[] mProjMatrix = new float[16];
   public float mAngle;
+  
+  public PlaygroundRenderer(ShipState myShip, ShipState opponentShip)
+  {
+    this.myShip = myShip;
+    this.opponentShip = opponentShip;
+  }
   
   public void onSurfaceCreated(GL10 unused, EGLConfig config) {
     
@@ -78,7 +86,7 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
       GLES20.glEnableVertexAttribArray(maPositionHandle);
       
       // Apply a ModelView Projection transformation
-      Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
+      //Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
       GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
       
    // Create a rotation for the triangle (Boring! Comment this out:)
