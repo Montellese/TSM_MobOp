@@ -202,7 +202,6 @@ public class StarshooterMain extends Activity
         
         input.setOnKeyListener(new OnKeyListener()
         {
-          @Override
           public boolean onKey(View v, int keyCode, KeyEvent event)
           {
             if(event.getAction() == KeyEvent.ACTION_DOWN)
