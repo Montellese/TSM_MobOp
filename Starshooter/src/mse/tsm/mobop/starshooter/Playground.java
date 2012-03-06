@@ -14,42 +14,59 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.Surface;
+import android.view.Window;
 import android.view.WindowManager;
 
 public class Playground extends Activity {
+  private SensorManager mSensorManager;
+  private PowerManager mPowerManager;
+  private WindowManager mWindowManager;
+  private Display mDisplay;
+  private WakeLock mWakeLock;
   
-	private ShipState myShip, opponentShip;
-
-	private PlaygroundSurfaceView mGLView;
+  private Player myShip, opponentShip;
+  
+  private GLSurfaceView mGLView;
+  
+  public Playground()
+  {
+    //Bundle b = getIntent().getExtras();
+    //short playerclassids[]= b.getShortArray("playerclassids");
     
-    private SensorManager mSensorManager;
-    private PowerManager mPowerManager;
-    private WindowManager mWindowManager;
-    private Display mDisplay;
-    private WakeLock mWakeLock;
+    myShip = new Test_Player();//GSensor_Player();
+    opponentShip = new TCP_Player();
+  }
   
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+  @Override
+  public void onCreate(Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
+    
+    // go fullsreen
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    
 
-        // Get an instance of the SensorManager
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+    // Get an instance of the SensorManager
+    mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-        // Get an instance of the PowerManager
-        mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
+    // Get an instance of the PowerManager
+    mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
 
-        // Get an instance of the WindowManager
-        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        mDisplay = mWindowManager.getDefaultDisplay();
+    // Get an instance of the WindowManager
+    mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+    mDisplay = mWindowManager.getDefaultDisplay();
 
-        // Create a bright wake lock
-        mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
-        
-        // Create a GLSurfaceView instance
-        // and set it as the ContentView for this Activity
-        mGLView = new PlaygroundSurfaceView(this, myShip, opponentShip);
-        setContentView(mGLView);
-    }
+    // Create a bright wake lock
+    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
+    
+    // Create a GLSurfaceView instance and set it
+    // as the ContentView for this Activity
+    mGLView = new PlaygroundSurfaceView(this,myShip,opponentShip);
+    setContentView(mGLView);
+    
+  }
     
     @Override
     protected void onPause() {
@@ -80,6 +97,7 @@ public class Playground extends Activity {
         // this is a good place to re-allocate them.
         mGLView.onResume();
     }
+
     
     class PlaygroundSurfaceView extends GLSurfaceView implements SensorEventListener {
     	
@@ -100,7 +118,7 @@ public class Playground extends Activity {
         private long mSensorTimeStamp;
         private long mCpuTimeStamp;
       
-        public PlaygroundSurfaceView(Context context, ShipState myShip, ShipState opponentShip){
+        public PlaygroundSurfaceView(Context context, Player myShip, Player opponentShip){
           super(context);
           
           // Create an OpenGL ES 2.0 context.
@@ -116,11 +134,11 @@ public class Playground extends Activity {
           mMetersToPixelsY = mYDpi / 0.0254f;
               
           // set the mRenderer member
-          mRenderer = new PlaygroundRenderer(myShip, opponentShip);
+          mRenderer = new PlaygroundRenderer(context, myShip, opponentShip);
           setRenderer(mRenderer);
           
           // Render the view only when there is a change
-          setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+          setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY /*RENDERMODE_WHEN_DIRTY*/);
           
           // Register this implementation as a SensorEventListener
           mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);

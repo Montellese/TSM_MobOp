@@ -144,14 +144,16 @@ public class StarshooterMain extends Activity
           {
             // master
             case 0 :
-              /*Intent intent = new Intent();
-              intent.setComponent(new ComponentName("Playground", "mse.tsm.mobop.starshooter"));
-              startActivity(intent);/*
-               pg = new Playground();
-               pg.startActivity(getIntent());*/
-                Intent i = new Intent(StarshooterMain.this, Playground.class);
-                //Bundle b = new Bundle(); b.putI
-                StarshooterMain.this.startActivity(i);
+            /*Intent i = new Intent(StarshooterMain.this, Playground.class);
+              StarshooterMain.this.startActivity(i);*/
+              
+              Intent intent = new Intent(StarshooterMain.this, Playground.class);
+              Bundle b = new Bundle();
+              short [] params = { Test_Player.getClassId(), Test_Player.getClassId() };
+              b.putShortArray( "playerclassids", params);
+              intent.putExtras(b);
+              startActivity(intent);
+              finish();
               break;
               
             // slave

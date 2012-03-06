@@ -7,16 +7,30 @@ import java.nio.FloatBuffer;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import android.content.Context;
+import android.graphics.Point;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.SystemClock;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class PlaygroundRenderer implements GLSurfaceView.Renderer
 {
-  private ShipState myShip, opponentShip;
+  private Player myShip, opponentShip;
+  private Context ctx;
   
-  private FloatBuffer triangleVB;
+  private int screenHeight, screenWidth;
+  
+  private FloatBuffer fbuff_myShip_wing, fbuff_myShip_rudder;
+  private ByteBuffer bbuff_myShip_wing, bbuff_myShip_rudder;
+  private float myShip_wing_coords[];
+  public static final float ship_wing_coords[] = { -0.075f, 0.0f, 0.1f,    0.075f, 0.0f, 0.1f,    0.0f, 0.18f, 0.1f };
+  public static final float ship_rudder_coords[] = { -0.005f, 0.0f, 0.1f,  0.0f, 0.0f, 0.15f,     0.0f, 0.15f, 0.1f };
+  public static final float myShip_wing_offset[] = { 0f, -0.95f, 0f };
+  public static final float myShip_rudder_offset[] = myShip_wing_offset;
+  private static float myShip_wing_coords_base[];
+  private static float myShip_rudder_coords_base[];
   
   private final String vertexShaderCode = 
       // This matrix member variable provides a hook to manipulate
@@ -47,16 +61,29 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
   private float[] mProjMatrix = new float[16];
   public float mAngle;
   
-  public PlaygroundRenderer(ShipState myShip, ShipState opponentShip)
+  static 
   {
+    try{
+      myShip_wing_coords_base = addVec2Vectors(myShip_wing_offset, ship_wing_coords);
+      myShip_rudder_coords_base = addVec2Vectors(myShip_rudder_offset, ship_rudder_coords);
+      
+    
+    } catch( Exception e ) {};
+  }
+  
+  public PlaygroundRenderer(Context context, Player myShip, Player opponentShip)
+  {
+    this.ctx = context;
     this.myShip = myShip;
     this.opponentShip = opponentShip;
+    
+    fetchScreenDimensions();
   }
   
   public void onSurfaceCreated(GL10 unused, EGLConfig config) {
     
     // Set the background frame color
-    GLES20.glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     
     // initialize the triangle vertex array
     initShapes();
@@ -71,10 +98,11 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     
     // get handle to the vertex shader's vPosition member
     maPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
+    
   }
   
   public void onDrawFrame(GL10 unused) {
-  
+      updateShapes();
       // Redraw background color
       GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
       
@@ -82,7 +110,7 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
       GLES20.glUseProgram(mProgram);
       
       // Prepare the triangle data
-      GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false, 12, triangleVB);
+      GLES20.glVertexAttribPointer(maPositionHandle, 3, GLES20.GL_FLOAT, false, 12, bbuff_myShip_wing);
       GLES20.glEnableVertexAttribArray(maPositionHandle);
       
       // Apply a ModelView Projection transformation
@@ -118,24 +146,46 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
   }
 
-  private void initShapes(){
-    
-    float triangleCoords[] = {
-        // X, Y, Z
-        -0.5f, -0.25f, 0.00001f,
-         0.5f, -0.25f, 0.00001f,
-         0.0f,  0.559016994f, 0.00001f
-    }; 
-    
-    // initialize vertex Buffer for triangle  
-    ByteBuffer vbb = ByteBuffer.allocateDirect(
-            // (# of coordinate values * 4 bytes per float)
-            triangleCoords.length * 4); 
-    vbb.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
-    triangleVB = vbb.asFloatBuffer();  // create a floating point buffer from the ByteBuffer
-    triangleVB.put(triangleCoords);    // add the coordinates to the FloatBuffer
-    triangleVB.position(0);            // set the buffer to read the first coordinate
 
+  private void initShapes()
+  {
+    // initialize vertex Buffer for wing  
+    bbuff_myShip_wing = ByteBuffer.allocateDirect(myShip_wing_coords_base.length * 4); 
+    bbuff_myShip_wing.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
+    fbuff_myShip_wing = bbuff_myShip_wing.asFloatBuffer();  // create a floating point buffer from the ByteBuffer
+
+    // initialize vertex Buffer for rudder  
+    bbuff_myShip_rudder = ByteBuffer.allocateDirect(myShip_rudder_coords_base.length * 4); 
+    bbuff_myShip_rudder.order(ByteOrder.nativeOrder());// use the device hardware's native byte order
+    fbuff_myShip_rudder = bbuff_myShip_rudder.asFloatBuffer();  // create a floating point buffer from the ByteBuffer
+    
+    //updateShapes();
+
+  }
+  
+  private void updateShapes()
+  {
+    try{ 
+      float ttt[] = addXYZ2Vectors( (float) myShip.getPosition(), 0f, 0f, myShip_wing_coords_base);
+      fbuff_myShip_wing.position(0);
+      fbuff_myShip_wing.put( ttt ); // add the coordinates to the FloatBuffer
+    } catch (Exception e) { };
+    fbuff_myShip_wing.position(0);                  // set the buffer to read the first coordinate
+    
+    try{ 
+      float ttt[] = addXYZ2Vectors( (float) myShip.getPosition(), 0f, 0f, myShip_rudder_coords_base);
+      fbuff_myShip_rudder.position(0);
+      fbuff_myShip_rudder.put( ttt ); // add the coordinates to the FloatBuffer
+    } catch (Exception e) { };
+    fbuff_myShip_rudder.position(0);                  // set the buffer to read the first coordinate
+  }
+  
+  private void fetchScreenDimensions()
+  {
+    WindowManager wm = (WindowManager) ctx.getSystemService(Context.WINDOW_SERVICE);
+    Display display = wm.getDefaultDisplay();
+    screenWidth = display.getWidth();
+    screenHeight = display.getHeight();
   }
   
   private int loadShader(int type, String shaderCode){
@@ -150,4 +200,40 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     
     return shader;
   }
+
+  /** add some components to a list of vectors
+   * 
+   * @param x           x component to add
+   * @param y           y component to add
+   * @param z           z component to add
+   * @param vectors     list of vectors
+   * @return            list of vectors with added components
+   * @throws Exception  If vectors lengths does not match
+   */
+  public static float [] addXYZ2Vectors(float x, float y, float z, float[] vectors) throws Exception
+  {
+    float vec []= { x, y, z };
+    
+    try{ return addVec2Vectors(vec, vectors); } catch(Exception e) { throw e; }
+  }
+  /** add some components to a list of vectors
+   * 
+   * @param vec         component vectors to add
+   * @param vectors     list of vectors
+   * @return            list of vectors with added components
+   * @throws Exception  If vectors lengths does not match
+   */
+  public static float [] addVec2Vectors(float[] vec2add, float[] vectors) throws Exception
+  {
+    if( (vectors.length%3 != 0) || (vec2add.length!=3) )
+      throw new Exception("Not every vector in given matrix has length 3.");
+    
+    float retVec[]=new float[vectors.length];
+    
+    for(int i=0;i<vectors.length;i++)
+      retVec[i]=vectors[i]+vec2add[i%3];
+    
+    return retVec;
+  }
+ 
 }

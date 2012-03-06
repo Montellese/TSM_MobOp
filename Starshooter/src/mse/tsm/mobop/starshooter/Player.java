@@ -2,7 +2,8 @@ package mse.tsm.mobop.starshooter;
 
 import android.os.SystemClock;
 
-public abstract class ShipState
+/** Player template **/
+public abstract class Player extends Thread
 {
   /** ship's position relative to it's owners view **/
   private float position;
@@ -14,7 +15,9 @@ public abstract class ShipState
   private long time;
   /** defines whether this ship is stored as opponend (i.e. not owned by this device's user) **/
   private boolean opponent;
-
+  
+  private static short playerclass_id;
+  private static short playerclassesCount = 0;
   
   /** maximum possible acceleration in positiv direction **/
   protected final float ACCELERATION_MAX = .5f;
@@ -22,7 +25,7 @@ public abstract class ShipState
   protected final float ACCELERATION_MIN = -ACCELERATION_MAX;
   
   /** maximum possible velocity in positiv direction **/
-  protected final float VELOCITY_MAX = 2;
+  protected final float VELOCITY_MAX = 1;
   /** maximum possible velocity in negativ direction **/
   protected final float VELOCITY_MIN = -VELOCITY_MAX;
   
@@ -31,15 +34,32 @@ public abstract class ShipState
   /** maximum possible position in negativ direction **/
   protected final float POSITION_MIN = -POSITION_MAX;
   
-  /** construct ShipState as owner **/
-  public ShipState()
+  static
+  {
+    playerclass_id = playerclassesCount++;
+  }
+  
+  
+  protected final static void registerClass(String PlayerName)
+  {
+    
+  }
+  
+  public final static short getClassId()
+  {
+    return playerclass_id;
+  }
+  
+  
+  /** construct Player as owner **/
+  public Player()
   {
     this(false);
   }
 
-  /** construct ShipState decideable whether it's owned by this device or by opponent 
+  /** construct Player decideable whether it's owned by this device or by opponent 
    * @param   opponent   defines whether this ship is stored as opponend (i.e. not owned by this device's user) **/
-  public ShipState(boolean opponent)
+  public Player(boolean opponent)
   {
     position = 0;
     acceleration = 0;
@@ -81,7 +101,7 @@ public abstract class ShipState
   public void updateFromAcceleration()
   {
     long time2 = SystemClock.uptimeMillis();
-    long timediv = time2-time;
+    float timediv = (time2-time)/1000;
     time = time2;
     setVelocity(velocity + acceleration*timediv);
     setPosition(position + velocity*timediv);
