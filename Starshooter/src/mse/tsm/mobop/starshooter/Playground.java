@@ -18,55 +18,53 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class Playground extends Activity {
-  private SensorManager mSensorManager;
-  private PowerManager mPowerManager;
-  private WindowManager mWindowManager;
-  private Display mDisplay;
-  private WakeLock mWakeLock;
+	private SensorManager mSensorManager;
+	private PowerManager mPowerManager;
+	private WindowManager mWindowManager;
+	private Display mDisplay;
+	private WakeLock mWakeLock;
   
-  private Player myShip, opponentShip;
+	private Player myShip, opponentShip;
   
-  private GLSurfaceView mGLView;
+	private GLSurfaceView mGLView;
   
-  public Playground()
-  {
-    //Bundle b = getIntent().getExtras();
-    //short playerclassids[]= b.getShortArray("playerclassids");
+	public Playground()
+	{
+		//Bundle b = getIntent().getExtras();
+		//short playerclassids[]= b.getShortArray("playerclassids");
     
-    myShip = new Test_Player();//GSensor_Player();
-    opponentShip = new TCP_Player();
-  }
+		this.myShip = new GSensorPlayer();
+		this.opponentShip = new TCPPlayer();
+	}
   
-  @Override
-  public void onCreate(Bundle savedInstanceState)
-  {
-    super.onCreate(savedInstanceState);
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
     
-    // go fullsreen
-    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    
+		// go fullsreen
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-    // Get an instance of the SensorManager
-    mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		// Get an instance of the SensorManager
+		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-    // Get an instance of the PowerManager
-    mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
+		// Get an instance of the PowerManager
+		mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
 
-    // Get an instance of the WindowManager
-    mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-    mDisplay = mWindowManager.getDefaultDisplay();
+		// Get an instance of the WindowManager
+		mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+		mDisplay = mWindowManager.getDefaultDisplay();
 
-    // Create a bright wake lock
-    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
-    
-    // Create a GLSurfaceView instance and set it
-    // as the ContentView for this Activity
-    mGLView = new PlaygroundSurfaceView(this,myShip,opponentShip);
-    setContentView(mGLView);
-    
-  }
+	    // Create a bright wake lock
+	    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
+	    
+	    // Create a GLSurfaceView instance and set it
+	    // as the ContentView for this Activity
+	    mGLView = new PlaygroundSurfaceView(this,myShip,opponentShip);
+	    setContentView(mGLView);
+	}
     
     @Override
     protected void onPause() {
@@ -98,7 +96,6 @@ public class Playground extends Activity {
         mGLView.onResume();
     }
 
-    
     class PlaygroundSurfaceView extends GLSurfaceView implements SensorEventListener {
     	
     	private final float TOUCH_SCALE_FACTOR = 180.0f / 320;

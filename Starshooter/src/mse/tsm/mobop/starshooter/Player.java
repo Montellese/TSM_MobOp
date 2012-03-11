@@ -1,19 +1,9 @@
 package mse.tsm.mobop.starshooter;
 
-import android.os.SystemClock;
-
 /** Player template **/
-public abstract class Player extends Thread
+public abstract class Player extends GameObject
 {
-  /** ship's position relative to it's owners view **/
-  private float position;
-  /** ship's velocity relative to it's owners view **/
-  private float velocity;
-  /** ship's acceleration relative to it's owners view **/
-  private float acceleration;
-  /** ingame elapsed time **/
-  private long time;
-  /** defines whether this ship is stored as opponend (i.e. not owned by this device's user) **/
+  /** defines whether this player is stored as opponent (i.e. not owned by this device's user) **/
   private boolean opponent;
   
   private static short playerclass_id;
@@ -39,7 +29,6 @@ public abstract class Player extends Thread
     playerclass_id = playerclassesCount++;
   }
   
-  
   protected final static void registerClass(String PlayerName)
   {
     
@@ -49,7 +38,6 @@ public abstract class Player extends Thread
   {
     return playerclass_id;
   }
-  
   
   /** construct Player as owner **/
   public Player()
@@ -61,50 +49,45 @@ public abstract class Player extends Thread
    * @param   opponent   defines whether this ship is stored as opponend (i.e. not owned by this device's user) **/
   public Player(boolean opponent)
   {
-    position = 0;
-    acceleration = 0;
-    time = SystemClock.uptimeMillis();
+	super();
     this.opponent = opponent;
   }
   
   /** get ships position relative to device's screen */
   public float getPosition()
   {
-    return (opponent?-1*position:position);
+    return (opponent ? -position : position);
   }
 
   public void resetPosition()
   {
-    resetPosition(0);
-  }
-  public void resetPosition(float position)
-  {
-    this.position = position;
-    this.velocity = 0;
-    this.acceleration = 0;
-  }
-
-
-  protected void setPosition(float position)
-  {
-    this.position = Math.max(Math.min(position,POSITION_MAX),POSITION_MIN);
-  }
-  protected void setVelocity(float velocity)
-  {
-    this.velocity = Math.max(Math.min(velocity,VELOCITY_MAX),VELOCITY_MIN);
-  }
-  public void setAcceleration(float acceleration)
-  {
-    this.acceleration = Math.max(Math.min(acceleration,ACCELERATION_MAX),ACCELERATION_MIN);
+    resetPosition(0.0f);
   }
   
-  public void updateFromAcceleration()
+  public void resetPosition(float position)
   {
-    long time2 = SystemClock.uptimeMillis();
-    float timediv = (time2-time)/1000;
-    time = time2;
-    setVelocity(velocity + acceleration*timediv);
-    setPosition(position + velocity*timediv);
+    this.setPosition(position);
+    this.setVelocity(0);
+    this.setAcceleration(0);
   }
 
+  @Override
+  protected void setPosition(float position)
+  {
+	super.setPosition(Math.max(Math.min(position,POSITION_MAX),POSITION_MIN));
+  }
+
+  @Override
+  protected void setVelocity(float velocity)
+  {
+	super.setVelocity(Math.max(Math.min(velocity,VELOCITY_MAX),VELOCITY_MIN));
+  }
+
+  @Override
+  public void setAcceleration(float acceleration)
+  {
+	super.setAcceleration(Math.max(Math.min(acceleration,ACCELERATION_MAX),ACCELERATION_MIN));
+  }
+
+  abstract public void Draw();
 }

@@ -12,6 +12,7 @@ import android.graphics.Point;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
+import android.os.SystemClock;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -19,6 +20,8 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
 {
   private Player myShip, opponentShip;
   private Context ctx;
+  
+  private long time;
   
   private int screenHeight, screenWidth;
   
@@ -66,8 +69,6 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     try{
       myShip_wing_coords_base = addVec2Vectors(myShip_wing_offset, ship_wing_coords);
       myShip_rudder_coords_base = addVec2Vectors(myShip_rudder_offset, ship_rudder_coords);
-      
-    
     } catch( Exception e ) {};
   }
   
@@ -81,7 +82,6 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
   }
   
   public void onSurfaceCreated(GL10 unused, EGLConfig config) {
-    
     // Set the background frame color
     GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     
@@ -98,7 +98,6 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     
     // get handle to the vertex shader's vPosition member
     maPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
-    
   }
   
   public void onDrawFrame(GL10 unused) {
@@ -117,7 +116,7 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
       //Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mVMatrix, 0);
       GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
       
-   // Create a rotation for the triangle (Boring! Comment this out:)
+      // Create a rotation for the triangle (Boring! Comment this out:)
       // long time = SystemClock.uptimeMillis() % 4000L;
       // float angle = 0.090f * ((int) time);
 
@@ -129,6 +128,16 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
       
       // Apply a ModelView Projection transformation
       GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
+      
+      // Move all the objects
+      long now = SystemClock.uptimeMillis();
+      this.myShip.Move(now - this.time);
+      this.opponentShip.Move(now - this.time);
+      this.time = now;
+      
+      // Draw all the objects
+      this.myShip.Draw();
+      this.opponentShip.Draw();
      
       // Draw the triangle
       GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
@@ -146,7 +155,6 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     Matrix.setLookAtM(mVMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
   }
 
-
   private void initShapes()
   {
     // initialize vertex Buffer for wing  
@@ -160,7 +168,6 @@ public class PlaygroundRenderer implements GLSurfaceView.Renderer
     fbuff_myShip_rudder = bbuff_myShip_rudder.asFloatBuffer();  // create a floating point buffer from the ByteBuffer
     
     //updateShapes();
-
   }
   
   private void updateShapes()

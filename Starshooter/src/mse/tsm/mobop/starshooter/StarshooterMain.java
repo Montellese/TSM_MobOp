@@ -139,28 +139,27 @@ public class StarshooterMain extends Activity
     
     builder.setItems(items, new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int selectedItem) {
-          
-          switch( selectedItem )
-          {
-            // master
-            case 0 :
-            /*Intent i = new Intent(StarshooterMain.this, Playground.class);
-              StarshooterMain.this.startActivity(i);*/
-              
-              Intent intent = new Intent(StarshooterMain.this, Playground.class);
-              Bundle b = new Bundle();
-              short [] params = { Test_Player.getClassId(), Test_Player.getClassId() };
-              b.putShortArray( "playerclassids", params);
-              intent.putExtras(b);
-              startActivity(intent);
-              finish();
-              break;
-              
-            // slave
-            case 1 :
-              showDialog(DIALOG_SLAVE_PROMPT4MASTER_IP);
-              break;
-          }
+        	switch( selectedItem )
+		    {
+		    	// master
+		    	case 0 :
+		    		Intent i = new Intent(StarshooterMain.this, Playground.class);
+		    		StarshooterMain.this.startActivity(i);
+		      
+		    		/*Intent intent = new Intent(StarshooterMain.this, Playground.class);
+			      	Bundle b = new Bundle();
+			      	short [] params = { Test_Player.getClassId(), Test_Player.getClassId() };
+			      	b.putShortArray( "playerclassids", params);
+			      	intent.putExtras(b);
+			      	startActivity(intent);*/
+		    		finish();
+		    		break;
+		      
+		    	// slave
+		    	case 1 :
+		    		showDialog(DIALOG_SLAVE_PROMPT4MASTER_IP);
+		    		break;
+		    }
         }
     });
     AlertDialog alert = builder.create();
