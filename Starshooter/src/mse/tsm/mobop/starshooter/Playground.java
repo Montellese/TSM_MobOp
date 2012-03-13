@@ -16,55 +16,57 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class Playground extends Activity {
-	private SensorManager mSensorManager;
-	private PowerManager mPowerManager;
-	private WindowManager mWindowManager;
-	private Display mDisplay;
-	private WakeLock mWakeLock;
+  private SensorManager mSensorManager;
+  private PowerManager mPowerManager;
+  private WindowManager mWindowManager;
+  private Display mDisplay;
+  private WakeLock mWakeLock;
   
-	private Player myShip, opponentShip;
+  private Player myShip, opponentShip;
   
-	private GLSurfaceView mGLView;
+  private GLSurfaceView mGLView;
   
-	public Playground()
-	{
-		//Bundle b = getIntent().getExtras();
-		//short playerclassids[]= b.getShortArray("playerclassids");
+  public Playground()
+  {
+    //Bundle b = getIntent().getExtras();
+    //short playerclassids[]= b.getShortArray("playerclassids");
     
-		this.myShip = new GSensorPlayer();
-		this.opponentShip = new TCPPlayer();
-	}
+    myShip = new GSensorPlayer();
+    opponentShip = new TCPPlayer();
+  }
   
-	@Override
-	public void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
+  @Override
+  public void onCreate(Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
     
-		// go fullsreen
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    // go fullsreen
+    this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
+        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    
+    // Get an instance of the SensorManager
+    mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
-		// Get an instance of the SensorManager
-		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+    // Get an instance of the PowerManager
+    mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
 
-		// Get an instance of the PowerManager
-		mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
+    // Get an instance of the WindowManager
+    mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+    mDisplay = mWindowManager.getDefaultDisplay();
 
-		// Get an instance of the WindowManager
-		mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-		mDisplay = mWindowManager.getDefaultDisplay();
-
-	    // Create a bright wake lock
-	    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
-	    
-	    // Create a GLSurfaceView instance and set it
-	    // as the ContentView for this Activity
-	    mGLView = new PlaygroundSurfaceView(this,myShip,opponentShip);
-	    setContentView(mGLView);
-	}
+    // Create a bright wake lock
+    mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName());
+    
+    // Create a GLSurfaceView instance and set it
+    // as the ContentView for this Activity
+    mGLView = new PlaygroundSurfaceView(this,myShip,opponentShip);
+    setContentView(mGLView);
+  }
     
     @Override
     protected void onPause() {
@@ -95,14 +97,14 @@ public class Playground extends Activity {
         // this is a good place to re-allocate them.
         mGLView.onResume();
     }
-
+    
     class PlaygroundSurfaceView extends GLSurfaceView implements SensorEventListener {
     	
     	private final float TOUCH_SCALE_FACTOR = 180.0f / 320;
     	private PlaygroundRenderer mRenderer;
     	private float mPreviousX;
     	private float mPreviousY;
-
+      
     	private Sensor mAccelerometer;
 
         private float mXDpi;
@@ -114,6 +116,8 @@ public class Playground extends Activity {
         private float mSensorY;
         private long mSensorTimeStamp;
         private long mCpuTimeStamp;
+        
+        private int counterToClampTextRefresh = 0;
       
         public PlaygroundSurfaceView(Context context, Player myShip, Player opponentShip){
           super(context);
@@ -131,7 +135,7 @@ public class Playground extends Activity {
           mMetersToPixelsY = mYDpi / 0.0254f;
               
           // set the mRenderer member
-          mRenderer = new PlaygroundRenderer(context, myShip, opponentShip);
+          //mRenderer = new PlaygroundRenderer(context, myShip, opponentShip);
           setRenderer(mRenderer);
           
           // Render the view only when there is a change
@@ -173,7 +177,7 @@ public class Playground extends Activity {
                       dy = dy * -1 ;
                     }
                   
-                    mRenderer.mAngle += (dx + dy) * TOUCH_SCALE_FACTOR;
+                    //mRenderer.mAngle += (dx + dy) * TOUCH_SCALE_FACTOR;
                     requestRender();
             }
 
@@ -219,6 +223,13 @@ public class Playground extends Activity {
 
             mSensorTimeStamp = event.timestamp;
             mCpuTimeStamp = System.nanoTime();
+            if( counterToClampTextRefresh++ >= 10 )
+            {
+              counterToClampTextRefresh=0;
+              StringBuffer sb = new StringBuffer("SensorX: ");
+              sb.append(mSensorX).append("\nSensorY: ").append(mSensorY);
+              Toast.makeText(getApplicationContext(),sb, Toast.LENGTH_SHORT).show();
+            }
     	}
     }
 }
