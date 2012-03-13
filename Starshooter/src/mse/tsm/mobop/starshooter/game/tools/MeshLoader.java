@@ -1,4 +1,4 @@
-package mse.tsm.mobop.starshooter.tools;
+package mse.tsm.mobop.starshooter.game.tools;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

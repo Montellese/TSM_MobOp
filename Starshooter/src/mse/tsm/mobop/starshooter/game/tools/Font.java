@@ -1,4 +1,4 @@
-package mse.tsm.mobop.starshooter.tools;
+package mse.tsm.mobop.starshooter.game.tools;
 
 import java.util.HashMap;
 
@@ -13,9 +13,9 @@ import android.graphics.Typeface;
 import android.graphics.Paint.FontMetrics;
 import android.graphics.Paint.Style;
 
-import mse.tsm.mobop.starshooter.tools.Mesh.PrimitiveType;
-import mse.tsm.mobop.starshooter.tools.Texture.TextureFilter;
-import mse.tsm.mobop.starshooter.tools.Texture.TextureWrap;
+import mse.tsm.mobop.starshooter.game.tools.Mesh.PrimitiveType;
+import mse.tsm.mobop.starshooter.game.tools.Texture.TextureFilter;
+import mse.tsm.mobop.starshooter.game.tools.Texture.TextureWrap;
 
 public class Font
 {

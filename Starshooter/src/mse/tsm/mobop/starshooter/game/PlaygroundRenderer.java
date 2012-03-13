@@ -1,7 +1,7 @@
-package mse.tsm.mobop.starshooter;
+package mse.tsm.mobop.starshooter.game;
 
-import mse.tsm.mobop.starshooter.tools.GameActivity;
-import mse.tsm.mobop.starshooter.tools.GameListener;
+import mse.tsm.mobop.starshooter.game.tools.GameActivity;
+import mse.tsm.mobop.starshooter.game.tools.GameListener;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

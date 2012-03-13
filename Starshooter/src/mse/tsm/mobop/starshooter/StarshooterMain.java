@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import mse.tsm.mobop.starshooter.game.Playground;
+
 import android.R.bool;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -145,14 +147,6 @@ public class StarshooterMain extends Activity
 		    	case 0 :
 		    		Intent i = new Intent(StarshooterMain.this, Playground.class);
 		    		StarshooterMain.this.startActivity(i);
-		      
-		    		/*Intent intent = new Intent(StarshooterMain.this, Playground.class);
-			      	Bundle b = new Bundle();
-			      	short [] params = { Test_Player.getClassId(), Test_Player.getClassId() };
-			      	b.putShortArray( "playerclassids", params);
-			      	intent.putExtras(b);
-			      	startActivity(intent);*/
-		    		finish();
 		    		break;
 		      
 		    	// slave

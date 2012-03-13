@@ -1,4 +1,4 @@
-package mse.tsm.mobop.starshooter.tools;
+package mse.tsm.mobop.starshooter.game.tools;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

@@ -1,4 +1,4 @@
-package mse.tsm.mobop.starshooter.simulation;
+package mse.tsm.mobop.starshooter.game.simulation;
 
 import java.io.Serializable;
 

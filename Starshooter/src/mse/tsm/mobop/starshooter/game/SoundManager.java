@@ -1,4 +1,4 @@
-package mse.tsm.mobop.starshooter;
+package mse.tsm.mobop.starshooter.game;
 
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
@@ -7,7 +7,7 @@ import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.util.Log;
 
-import mse.tsm.mobop.starshooter.tools.GameActivity;
+import mse.tsm.mobop.starshooter.game.tools.GameActivity;
 
 public class SoundManager
 {
