@@ -1,5 +1,6 @@
 package mse.tsm.mobop.starshooter.game;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,7 +26,7 @@ public class Playground extends GameActivity implements GameListener
 	@Override
 	public void onCreate(Bundle savedInstanceState)
   	{
-		this.setRequestedOrientation(0);
+		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// go fullscreen
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
