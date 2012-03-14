@@ -13,6 +13,8 @@ public class GameLoop implements GameScreen, SimulationListener
 	public Simulation simulation;
 	Renderer renderer;	
 	SoundManager soundManager;
+	
+	boolean wasTouched = false;
 
 	public GameLoop(GL10 gl, GameActivity activity)
 	{
@@ -48,8 +50,14 @@ public class GameLoop implements GameScreen, SimulationListener
 		else
 			simulation.moveShipRight(true, activity.getDeltaTime(), Math.abs(activity.getAccelerationOnXAxis()) / 10);
 	
-		if (activity.isTouched())
+		boolean isTouched = activity.isTouched();
+		if (isTouched && !wasTouched)
+		{
+			wasTouched = true;
 			simulation.shot(true);
+		}
+		else if (!isTouched)
+			wasTouched = false;
 	}
 
 	public boolean isDone()

@@ -8,6 +8,7 @@ import mse.tsm.mobop.starshooter.game.simulation.Explosion;
 import mse.tsm.mobop.starshooter.game.simulation.Ship;
 import mse.tsm.mobop.starshooter.game.simulation.Shot;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
+import mse.tsm.mobop.starshooter.game.simulation.Vector;
 import mse.tsm.mobop.starshooter.game.tools.Font;
 import mse.tsm.mobop.starshooter.game.tools.Font.FontStyle;
 import mse.tsm.mobop.starshooter.game.tools.Font.Text;
@@ -40,19 +41,27 @@ public class Renderer
 		{
 			shipMesh = new Mesh(gl, 3, true, false, false);
 			shipMesh.color(0, 1, 0, 1);
-			shipMesh.vertex(-0.075f, 0.0f, 0.1f);
+			shipMesh.vertex(-0.075f, 0.0f, 0.0001f);
 			shipMesh.color(0, 1, 0, 1);
-			shipMesh.vertex(0.075f, 0.0f, 0.1f);
+			shipMesh.vertex(0.075f, 0.0f, 0.0001f);
 			shipMesh.color(0, 1, 0, 1);
-			shipMesh.vertex(0.0f, 0.18f, 0.1f);
+			shipMesh.vertex(0.0f, 0.18f, 0.0001f);
 			
 			shipOpponentMesh = new Mesh(gl, 3, true, false, false);
-			shipOpponentMesh.color(1, 0, 0, 1);
-			shipOpponentMesh.vertex(-0.075f, 0.0f, 0.0f);
-			shipOpponentMesh.color(1, 0, 0, 1);
-			shipOpponentMesh.vertex(0.075f, 0.0f, 0.0f);
-			shipOpponentMesh.color(1, 0, 0, 1);
-			shipOpponentMesh.vertex(0.0f, 0.18f, 0.0f);
+			shipOpponentMesh.color(1, 1, 0, 1);
+			shipOpponentMesh.vertex(-0.075f, 0.0f, 0.0001f);
+			shipOpponentMesh.color(1, 1, 0, 1);
+			shipOpponentMesh.vertex(0.075f, 0.0f, 0.0001f);
+			shipOpponentMesh.color(1, 1, 0, 1);
+			shipOpponentMesh.vertex(0.0f, 0.18f, 0.0001f);
+			
+			shotMesh = new Mesh(gl, 100, true, false, false);
+			for (int index = 0; index < 100; index++)
+			{
+				double angle = index * 2 * Math.PI / 100;
+				shotMesh.color(1, 0, 0, 1);
+				shotMesh.vertex((float)(Math.cos(angle) * 0.02), (float)(Math.sin(angle) * 0.02), 0.0001f);
+			}
 			
 			/* TODO
 			shipMesh = MeshLoader.loadObj(gl, activity.getAssets().open( "ship.obj" ));
@@ -117,15 +126,15 @@ public class Renderer
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glViewport(0, 0, activity.getViewportWidth(), activity.getViewportHeight());
 		
-		gl.glEnable(GL10.GL_TEXTURE_2D);				
+		//gl.glEnable(GL10.GL_TEXTURE_2D);				
 		// TODO: renderBackground(gl);		
 		
 		setProjectionAndCamera(gl, simulation.ship, activity);
+		
+		renderShots(gl, simulation.shots);
 					
 		renderShip(gl, simulation.ship, activity);
-		// TODO: renderShip(gl, simulation.shipOpponent, activity);
-		
-		// TODO: renderShots(gl, simulation.shots);
+		renderShip(gl, simulation.shipOpponent, activity);
 		
 		gl.glEnable(GL10.GL_TEXTURE_2D);
 		// TODO: renderExplosions(gl, simulation.explosions);
@@ -185,13 +194,11 @@ public class Renderer
 		gl.glTranslatef(ship.position.x, ship.position.y, ship.position.z);
 		if (ship.isOpponent)
 		{
-			gl.glTranslatef(0.0f, 0.9f, 0.0f);
 			gl.glRotatef(180, 0, 0, 1);
 			shipOpponentMesh.render(PrimitiveType.Triangles);
 		}
 		else
 		{
-			gl.glTranslatef(0.0f, -1.0f, 0.0f);
 			shipMesh.render(PrimitiveType.Triangles);
 		}
 		gl.glPopMatrix();
@@ -199,16 +206,14 @@ public class Renderer
 	
 	private void renderShots(GL10 gl, ArrayList<Shot> shots)
 	{
-		gl.glColor4f(1, 1, 0, 1);
 		for (int i = 0; i < shots.size(); i++)
 		{
 			Shot shot = shots.get(i);
 			gl.glPushMatrix();
 			gl.glTranslatef(shot.position.x, shot.position.y, shot.position.z);
-			shotMesh.render(PrimitiveType.Triangles);
+			shotMesh.render(PrimitiveType.TriangleFan);
 			gl.glPopMatrix();
-		}		
-		gl.glColor4f(1, 1, 1, 1);
+		}
 	}
 	
 	private void renderExplosions(GL10 gl, ArrayList<Explosion> explosions) 

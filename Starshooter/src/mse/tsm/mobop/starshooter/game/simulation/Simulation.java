@@ -7,8 +7,8 @@ public class Simulation implements Serializable
 {		
 	public final static float PLAYFIELD_MIN_X = -0.5f;
 	public final static float PLAYFIELD_MAX_X = 0.5f;
-	public final static float PLAYFIELD_MIN_Y = -0.5f;
-	public final static float PLAYFIELD_MAX_Y = 0.5f;
+	public final static float PLAYFIELD_MIN_Y = -1f;
+	public final static float PLAYFIELD_MAX_Y = 1f;
 	
 	public ArrayList<Shot> shots = new ArrayList<Shot>( );
 	public ArrayList<Explosion> explosions = new ArrayList<Explosion>( );
@@ -27,7 +27,9 @@ public class Simulation implements Serializable
 	private void populate()
 	{
 		ship = new Ship(false);
+		ship.position.y = -1.0f;
 		shipOpponent = new Ship(true);
+		shipOpponent.position.y = 0.9f;
 	}
 	
 	public void update(float delta)

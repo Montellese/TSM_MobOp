@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class Ship implements Serializable
 {
-	public static final float SHIP_RADIUS = 1;
+	public static final float SHIP_RADIUS = 0.09f;
 	public static final float SHIP_VELOCITY = 10;
 	public final Vector position = new Vector();
 	public int lives = 3;
