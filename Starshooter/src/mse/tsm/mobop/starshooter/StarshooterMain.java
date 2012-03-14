@@ -74,13 +74,11 @@ public class StarshooterMain extends Activity
     setContentView(R.layout.main);
     
     listItems = new ArrayList<ListObject>();
-    mmenuItems = new String[3];
+    mmenuItems = new String[2];
     // fill up menu
       // connect
     ListObject lo0 = new ListObject(getResources().getString(R.string.main_menu_connect), "");
     listItems.add(lo0);
-      // settings
-    listItems.add(new ListObject(getResources().getString(R.string.main_menu_settings), ""));
       // about
     StringBuilder sb = new StringBuilder();
     sb.append(getResources().getString(R.string.app_name));
