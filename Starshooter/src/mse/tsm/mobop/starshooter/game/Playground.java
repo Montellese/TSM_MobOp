@@ -89,7 +89,7 @@ public class Playground extends GameActivity implements GameListener
 			if (screen instanceof StartScreen)
 				screen = new GameLoop(gl, activity);
 			else if (screen instanceof GameLoop)
-				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.score);
+				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.ship.lives > 0);
 			else if (screen instanceof GameOverScreen)
 				screen = new StartScreen(gl, activity);
 		}
