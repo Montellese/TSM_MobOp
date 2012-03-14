@@ -1,11 +1,5 @@
 package mse.tsm.mobop.starshooter.game.screens;
 
-import android.content.Context;
-import android.content.res.AssetFileDescriptor;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.util.Log;
-
 import javax.microedition.khronos.opengles.GL10;
 
 import mse.tsm.mobop.starshooter.game.Renderer;
@@ -49,19 +43,18 @@ public class GameLoop implements GameScreen, SimulationListener
 	
 	private void processInput(GameActivity activity)
 	{		
-		if (activity.getAccelerationOnYAxis() < 0)
-			simulation.moveShipLeft(activity.getDeltaTime(), Math.abs(activity.getAccelerationOnYAxis()) / 10);
+		if (activity.getAccelerationOnXAxis() < 0)
+			simulation.moveShipLeft(true, activity.getDeltaTime(), Math.abs(activity.getAccelerationOnXAxis()) / 10);
 		else
-			simulation.moveShipRight(activity.getDeltaTime(), Math.abs(activity.getAccelerationOnYAxis()) / 10);
+			simulation.moveShipRight(true, activity.getDeltaTime(), Math.abs(activity.getAccelerationOnXAxis()) / 10);
 	
-		
 		if (activity.isTouched())
-			simulation.shot();
+			simulation.shot(true);
 	}
 
 	public boolean isDone()
 	{
-		return simulation.ship.lives == 0;
+		return simulation.ship.lives == 0 || simulation.shipOpponent.lives == 0;
 	}
 	
 	public void dispose()

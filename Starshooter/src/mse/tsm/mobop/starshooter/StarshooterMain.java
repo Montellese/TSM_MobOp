@@ -64,8 +64,6 @@ public class StarshooterMain extends Activity
   
   /** masters ip address **/
   private Integer [] con_masterip;
-  
-    
 
   //@Override
   public void onCreate(Bundle savedInstanceState)
@@ -86,7 +84,8 @@ public class StarshooterMain extends Activity
     try
     {
       sb.append( getPackageManager().getPackageInfo(getPackageName(), 0).versionName );
-    } catch (NameNotFoundException e)
+    } 
+    catch (NameNotFoundException e)
     {
       sb.append("unknw");
     }
@@ -97,34 +96,24 @@ public class StarshooterMain extends Activity
     adapter = new MenuAdapter(this, mmenuItems, listItems);
     list.setAdapter(adapter);
     
-    list.setOnItemClickListener(new ListView.OnItemClickListener() {
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //Toast.makeText(getApplicationContext(),"("+Integer.toString(position)+") selected", Toast.LENGTH_LONG).show();
-        
+    list.setOnItemClickListener(new ListView.OnItemClickListener()
+    {
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+      {
         switch(position)
         {
           // try to connect
-          case 0 :
+          case 0:
             dialog_selectMasterSlave();
-            break;
-          
-          // settings
-          case 1 :
-            
             break;
             
           // About
-          case 2 :
-            
+          case 1:
+            // Don't do anything
             break;
-            
-          // quit button is obsolet
         }
-
-        
       }
     });
-    
   }
 
   public void dialog_selectMasterSlave()
@@ -137,18 +126,20 @@ public class StarshooterMain extends Activity
     AlertDialog.Builder builder = new AlertDialog.Builder(this);
     builder.setTitle(getResources().getString(R.string.select_masterSlave_title));
     
-    builder.setItems(items, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int selectedItem) {
+    builder.setItems(items, new DialogInterface.OnClickListener()
+    {
+        public void onClick(DialogInterface dialog, int selectedItem)
+        {
         	switch( selectedItem )
 		    {
 		    	// master
-		    	case 0 :
+		    	case 0:
 		    		Intent i = new Intent(StarshooterMain.this, Playground.class);
 		    		StarshooterMain.this.startActivity(i);
 		    		break;
 		      
 		    	// slave
-		    	case 1 :
+		    	case 1:
 		    		showDialog(DIALOG_SLAVE_PROMPT4MASTER_IP);
 		    		break;
 		    }
@@ -166,11 +157,11 @@ public class StarshooterMain extends Activity
         dialog = new Dialog(this);
   
         dialog.setContentView(R.layout.request_ip_prompt);
-        dialog.setTitle( getResources().getString(R.string.prompt4ip_title) );
+        dialog.setTitle(getResources().getString(R.string.prompt4ip_title));
         
-        final AutoCompleteTextView input = (AutoCompleteTextView) dialog.findViewById(R.id.ripp_input);
-        final Button button = (Button) dialog.findViewById(R.id.ripp_button);
-        final ProgressBar pb= (ProgressBar) dialog.findViewById(R.id.ripp_connectionProgress);
+        final AutoCompleteTextView input = (AutoCompleteTextView)dialog.findViewById(R.id.ripp_input);
+        final Button button = (Button)dialog.findViewById(R.id.ripp_button);
+        final ProgressBar pb = (ProgressBar)dialog.findViewById(R.id.ripp_connectionProgress);
         
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener()
         {
@@ -203,17 +194,7 @@ public class StarshooterMain extends Activity
               {
                 button.performClick();
                 return true;
-              }/*else if(keyCode == KeyEvent.KEYCODE_BACK)
-              {
-                Toast.makeText(getApplicationContext(),"here", Toast.LENGTH_SHORT).show();
-                
-                pb.setVisibility(View.INVISIBLE);
-                input.setEnabled(true);
-                input.requestFocus();
-                button.setText(R.string.prompt4ip_continue);
-                prompt4masterIp_state = PROMPT4MASTERIP_STATE_READY;
-                return false;
-              }*/
+              }
             }
             return false;
           }
@@ -253,14 +234,13 @@ public class StarshooterMain extends Activity
                 /// TODO: aborting `trying-to-connect-to-master'-thread
                 break;
             }
-            
           }
         });
         
         showDialog(dialog.getVolumeControlStream());
         break;
       default:
-          dialog = null;
+    	  dialog = null;
     }
     return dialog;
   }
@@ -272,7 +252,6 @@ public class StarshooterMain extends Activity
     list.setAdapter(null);
     super.onDestroy();
   }
-
 }
 
 class IPchecker{

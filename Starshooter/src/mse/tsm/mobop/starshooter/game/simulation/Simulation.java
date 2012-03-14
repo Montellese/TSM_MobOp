@@ -5,18 +5,16 @@ import java.util.ArrayList;
 
 public class Simulation implements Serializable
 {		
-	public final static float PLAYFIELD_MIN_X = -14;
-	public final static float PLAYFIELD_MAX_X = 14;
-	public final static float PLAYFIELD_MIN_Z = -15;
-	public final static float PLAYFIELD_MAX_Z = 2;
+	public final static float PLAYFIELD_MIN_X = -0.5f;
+	public final static float PLAYFIELD_MAX_X = 0.5f;
+	public final static float PLAYFIELD_MIN_Y = -0.5f;
+	public final static float PLAYFIELD_MAX_Y = 0.5f;
 	
 	public ArrayList<Shot> shots = new ArrayList<Shot>( );
 	public ArrayList<Explosion> explosions = new ArrayList<Explosion>( );
-	public Ship ship;
-	public Shot shipShot = null;
+	public Ship ship, shipOpponent;
+	public Shot shipShot = null, shipOpponentShot = null;
 	public transient SimulationListener listener;
-	public float multiplier = 1;
-	public int score;
 	
 	private ArrayList<Shot> removedShots = new ArrayList<Shot>();
 	private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>( );
@@ -28,18 +26,20 @@ public class Simulation implements Serializable
 	
 	private void populate()
 	{
-		ship = new Ship();
+		ship = new Ship(false);
+		shipOpponent = new Ship(true);
 	}
 	
 	public void update(float delta)
 	{			
 		ship.update(delta);
+		shipOpponent.update(delta);
 		updateShots(delta);
 		updateExplosions(delta);
 		checkShipCollision();	
 	}
 	
-	private void updateShots( float delta )
+	private void updateShots(float delta)
 	{
 		removedShots.clear();
 		for (int i = 0; i < shots.size(); i++)
@@ -55,6 +55,8 @@ public class Simulation implements Serializable
 		
 		if (shipShot != null && shipShot.hasLeftField)
 			shipShot = null;
+		if (shipOpponentShot != null && shipOpponentShot.hasLeftField)
+			shipOpponentShot = null;
 	}
 	
 	public void updateExplosions(float delta)
@@ -81,7 +83,7 @@ public class Simulation implements Serializable
 			for (int i = 0; i < shots.size(); i++)
 			{
 				Shot shot = shots.get(i);
-				if (!shot.isInvaderShot)
+				if (!shot.isOpponentShot)
 					continue;											
 				
 				if (ship.position.distance(shot.position) < Ship.SHIP_RADIUS)
@@ -90,7 +92,32 @@ public class Simulation implements Serializable
 					shot.hasLeftField = true;
 					ship.lives--;
 					ship.isExploding = true;
-					explosions.add(new Explosion(ship.position) );
+					explosions.add(new Explosion(ship.position));
+					if (listener != null)
+						listener.explosion();
+					break;
+				}			
+			}
+			
+			for (int i = 0; i < removedShots.size(); i++)		
+				shots.remove(removedShots.get(i));
+		}
+		
+		if (!shipOpponent.isExploding)
+		{
+			for (int i = 0; i < shots.size(); i++)
+			{
+				Shot shot = shots.get(i);
+				if (shot.isOpponentShot)
+					continue;											
+				
+				if (shipOpponent.position.distance(shot.position) < Ship.SHIP_RADIUS)
+				{					
+					removedShots.add(shot);
+					shot.hasLeftField = true;
+					shipOpponent.lives--;
+					shipOpponent.isExploding = true;
+					explosions.add(new Explosion(shipOpponent.position));
 					if (listener != null)
 						listener.explosion();
 					break;
@@ -102,32 +129,39 @@ public class Simulation implements Serializable
 		}
 	}
 	
-	public void moveShipLeft(float delta, float scale) 
+	public void moveShipLeft(boolean me, float delta, float scale) 
 	{	
-		if (ship.isExploding)
+		Ship curShip = me ? ship : shipOpponent;
+		
+		if (curShip.isExploding)
 			return;
 		
-		ship.position.x -= delta * Ship.SHIP_VELOCITY * scale;
-		if (ship.position.x < PLAYFIELD_MIN_X)
-			ship.position.x = PLAYFIELD_MIN_X;
+		curShip.position.x -= delta * Ship.SHIP_VELOCITY * scale;
+		if (curShip.position.x < PLAYFIELD_MIN_X)
+			curShip.position.x = PLAYFIELD_MIN_X;
 	}
 
-	public void moveShipRight(float delta, float scale) 
+	public void moveShipRight(boolean me, float delta, float scale) 
 	{	
-		if (ship.isExploding)
+		Ship curShip = me ? ship : shipOpponent;
+		
+		if (curShip.isExploding)
 			return;
 		
-		ship.position.x += delta * Ship.SHIP_VELOCITY * scale;
-		if (ship.position.x > PLAYFIELD_MAX_X)
-			ship.position.x = PLAYFIELD_MAX_X;
+		curShip.position.x += delta * Ship.SHIP_VELOCITY * scale;
+		if (curShip.position.x > PLAYFIELD_MAX_X)
+			curShip.position.x = PLAYFIELD_MAX_X;
 	}
 
-	public void shot() 
+	public void shot(boolean me) 
 	{	
-		if (shipShot == null && !ship.isExploding)
+		Ship curShip = me ? ship : shipOpponent;
+		Shot curShot = me ? shipShot : shipOpponentShot;
+		
+		if (curShot == null && !curShip.isExploding)
 		{
-			shipShot = new Shot (ship.position, false);			
-			shots.add(shipShot);
+			curShot = new Shot(curShip.position, false);			
+			shots.add(curShot);
 			if( listener != null )
 				listener.shot();
 		}

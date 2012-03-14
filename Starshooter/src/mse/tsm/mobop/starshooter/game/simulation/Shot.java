@@ -6,25 +6,25 @@ public class Shot implements Serializable
 {
 	public static float SHOT_VELOCITY = 10;
 	public final Vector position = new Vector();
-	public boolean isInvaderShot;
+	public boolean isOpponentShot;
 	public boolean hasLeftField = false;
 
-	public Shot( Vector position, boolean isInvaderShot )
+	public Shot(Vector position, boolean isOpponentShot)
 	{
 		this.position.set( position );
-		this.isInvaderShot = isInvaderShot;
+		this.isOpponentShot = isOpponentShot;
 	}
 	
 	public void update(float delta) 
 	{	
-		if( isInvaderShot )
-			position.z += SHOT_VELOCITY * delta;
+		if (isOpponentShot)
+			position.y += SHOT_VELOCITY * delta;
 		else
-			position.z -= SHOT_VELOCITY * delta;
+			position.y -= SHOT_VELOCITY * delta;
 		
-		if( position.z > Simulation.PLAYFIELD_MAX_Z )
+		if (position.y > Simulation.PLAYFIELD_MAX_Y)
 			hasLeftField = true;
-		if( position.z < Simulation.PLAYFIELD_MIN_Z )
+		if (position.y < Simulation.PLAYFIELD_MIN_Y)
 			hasLeftField = true;
 	}
 }
