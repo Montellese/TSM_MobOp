@@ -1,84 +1,30 @@
 package mse.tsm.mobop.starshooter.game.screens;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.opengl.GLU;
-import android.util.Log;
-
 import javax.microedition.khronos.opengles.GL10;
 
-import mse.tsm.mobop.starshooter.game.SoundManager;
 import mse.tsm.mobop.starshooter.game.tools.Font;
 import mse.tsm.mobop.starshooter.game.tools.Font.FontStyle;
 import mse.tsm.mobop.starshooter.game.tools.Font.Text;
 import mse.tsm.mobop.starshooter.game.tools.GameActivity;
-import mse.tsm.mobop.starshooter.game.tools.Mesh;
-import mse.tsm.mobop.starshooter.game.tools.Mesh.PrimitiveType;
-import mse.tsm.mobop.starshooter.game.tools.Texture;
-import mse.tsm.mobop.starshooter.game.tools.Texture.TextureFilter;
-import mse.tsm.mobop.starshooter.game.tools.Texture.TextureWrap;
 
 public class StartScreen implements GameScreen
 {	
-	Mesh backgroundMesh;
-	Texture backgroundTexture;
-	
-	Mesh titleMesh;
-	Texture titleTexture;
-	
 	boolean isDone = false;
-	
-	SoundManager soundManager;
+
 	Font font;
-	Text text;
-	String pressText = "Touch Screen to Start!";
+	Text textTop;
+	Text textBottom;
+	String textWaitingTop = "Waiting for";
+	String textWaitingBottom = "your opponent";
 	
 	public StartScreen(GL10 gl, GameActivity activity)
 	{			
-		/* TODO
-		backgroundMesh = new Mesh( gl, 4, false, true, false );
-		backgroundMesh.texCoord(0, 0);
-		backgroundMesh.vertex(-1, 1, 0 );
-		backgroundMesh.texCoord(1, 0);
-		backgroundMesh.vertex(1, 1, 0 );
-		backgroundMesh.texCoord(1, 1);
-		backgroundMesh.vertex(1, -1, 0 );
-		backgroundMesh.texCoord(0, 1);
-		backgroundMesh.vertex(-1, -1, 0 );
-		
-		titleMesh = new Mesh( gl, 4, false, true, false );
-		titleMesh.texCoord(0, 0);
-		titleMesh.vertex(-256, 256, 0);
-		titleMesh.texCoord(1, 0);
-		titleMesh.vertex(256, 256, 0);
-		titleMesh.texCoord(1, 0.5f);
-		titleMesh.vertex(256, 0, 0);
-		titleMesh.texCoord(0, 0.5f);
-		titleMesh.vertex(-256, 0, 0);
-		
-		try
-		{
-			Bitmap bitmap = BitmapFactory.decodeStream( activity.getAssets().open( "planet.jpg" ) );
-			backgroundTexture = new Texture( gl, bitmap, TextureFilter.MipMap, TextureFilter.Nearest, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
-			bitmap.recycle();
-			
-			bitmap = BitmapFactory.decodeStream( activity.getAssets().open( "title.png" ) );
-			titleTexture = new Texture( gl, bitmap, TextureFilter.Nearest, TextureFilter.Nearest, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge );
-			bitmap.recycle();	
-		}
-		catch( Exception ex )
-		{
-			Log.d( "Space Invaders", "couldn't load textures" );
-			throw new RuntimeException( ex );
-		}
-		
-		soundManager = new SoundManager(activity);
-		
-		font = new Font( gl, activity.getAssets(), "font.ttf", activity.getViewportWidth() > 480?32:16, FontStyle.Plain );
-		text = font.newText( gl );
-		text.setText( pressText );*/
+		font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 32, FontStyle.Plain);
+		textTop = font.newText(gl);
+		textTop.setText(textWaitingTop);
+		textBottom = font.newText(gl);
+		textBottom.setText(textWaitingBottom);
 	}	
 
 	public boolean isDone() 
@@ -87,27 +33,24 @@ public class StartScreen implements GameScreen
 	}
 
 	public void update(GameActivity activity) 
-	{	
+	{
+		// TODO: Update when both players are ready
 		if (activity.isTouched())
 			isDone = true;
 	}
 	
 	public void render(GL10 gl, GameActivity activity) 
 	{	
-		/* TODO
-		gl.glViewport( 0, 0, activity.getViewportWidth(), activity.getViewportHeight() );
-		gl.glClear( GL10.GL_COLOR_BUFFER_BIT );
-		gl.glEnable( GL10.GL_TEXTURE_2D );
-		gl.glMatrixMode( GL10.GL_PROJECTION );
+		gl.glViewport(0, 0, activity.getViewportWidth(), activity.getViewportHeight());
+		gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
-		gl.glMatrixMode( GL10.GL_MODELVIEW );
+		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		
 		gl.glEnable( GL10.GL_BLEND );
 		gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
-		
-		backgroundTexture.bind();
-		backgroundMesh.render(PrimitiveType.TriangleFan );
 		
 		gl.glMatrixMode( GL10.GL_PROJECTION );
 		GLU.gluOrtho2D( gl, 0, activity.getViewportWidth(), 0, activity.getViewportHeight() );
@@ -115,29 +58,25 @@ public class StartScreen implements GameScreen
 		gl.glLoadIdentity();
 		
 		gl.glLoadIdentity();
-		gl.glTranslatef( activity.getViewportWidth() / 2, activity.getViewportHeight() - 256, 0 );
-		titleTexture.bind();
-		titleMesh.render(PrimitiveType.TriangleFan);
+		float x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingTop) / 2;
+		float y = activity.getViewportHeight() / 2 + font.getLineHeight();
+		gl.glTranslatef(x, y, 0);
+		textTop.render();
 		
 		gl.glLoadIdentity();
-		gl.glTranslatef( activity.getViewportWidth() / 2 - font.getStringWidth( pressText ) / 2, 100, 0 );
-		text.render();
+		x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingBottom) / 2;
+		y = activity.getViewportHeight() / 2 - font.getLineHeight();
+		gl.glTranslatef(x, y, 0);
+		textBottom.render();
 		
-		gl.glDisable( GL10.GL_TEXTURE_2D );
-		gl.glDisable( GL10.GL_BLEND );*/
+		gl.glDisable(GL10.GL_TEXTURE_2D);
+		gl.glDisable(GL10.GL_BLEND);
 	}
 	
 	public void dispose() 
 	{	
-		/* TODO
-		backgroundTexture.dispose();
-		titleTexture.dispose();
-		
-		soundManager.dispose();
 		font.dispose();
-		text.dispose();
-		
-		backgroundMesh.dispose();
-		titleMesh.dispose();*/
+		textTop.dispose();
+		textBottom.dispose();
 	}
 }
