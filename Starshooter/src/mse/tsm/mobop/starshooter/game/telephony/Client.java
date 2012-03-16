@@ -12,20 +12,19 @@ import android.widget.Toast;
 public class Client extends Com
 {
   private int port;
-  private String client;
+  private String serverIP;
   private Socket kkSocket = null;
-  private PrintWriter out = null;
-  private BufferedReader in,stdIn = null;
+  private BufferedReader stdIn = null;
   private static volatile int runningThreads=0;
   private static volatile boolean run = false;
   private Context ctx;
   
   
-  public Client(String client,int port,Context context, Simulation sim)
+  public Client(String client,int port,Context context)
   {
-    super(context);
+    super(context,"SingleClientThread");
     this.port=port;
-    this.client=client;
+    this.serverIP=client;
     ctx=context;
   }
   
@@ -53,34 +52,35 @@ public class Client extends Com
     runningThreads++;
     try
     {
-        kkSocket = new Socket(client, port);
+        kkSocket = new Socket(serverIP, port);
         out = new PrintWriter(kkSocket.getOutputStream(), true);
         in = new BufferedReader(new InputStreamReader(kkSocket.getInputStream()));
     }
     catch (UnknownHostException e)
     {
-      handleError(e,"COM-CLIENT: Host unknown: `"+client+"`");
+      handleError(e,"COM-CLIENT: Host unknown: `"+serverIP+"`");
       return;
     }
     catch (IOException e)
     {
-      handleError(e,"COM-CLIENT: Couldn't get I/O for the connection to: "+client+":"+port+".");
+      handleError(e,"COM-CLIENT: Couldn't get I/O for the connection to: "+serverIP+":"+port+".");
       return;
     }
   
     
     stdIn = new BufferedReader(new InputStreamReader(System.in));
     String outputLine, inputLine;
-    Rprotocoll kkp = new Rprotocoll(ctx);
+    kkp = new Rprotocoll(ctx);
   
     while((inputLine = in.readLine()) != null)
     {
-    System.out.println("COM: IN  : "+inputLine);
-    outputLine = (run?kkp.processClientInput(inputLine):"BYE");
-    out.println(outputLine);
-    System.out.println("COM: OUT : "+outputLine);
-      if (outputLine.equals("BYE"))
-      break;
+      outputLine = (run?kkp.processClientInput(inputLine):"BYE");
+      if(outputLine!=null)
+      {
+        out.println(outputLine);
+        if (outputLine.equals("BYE"))
+        break;
+      }
     }
     disconnect();
     out.close();

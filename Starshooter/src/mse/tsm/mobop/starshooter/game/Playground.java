@@ -4,9 +4,11 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import mse.tsm.mobop.starshooter.R;
 import mse.tsm.mobop.starshooter.StarshooterMain;
 import mse.tsm.mobop.starshooter.game.screens.GameLoop;
 import mse.tsm.mobop.starshooter.game.screens.GameOverScreen;
@@ -15,6 +17,7 @@ import mse.tsm.mobop.starshooter.game.screens.StartScreen;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
 import mse.tsm.mobop.starshooter.game.telephony.Com;
 import mse.tsm.mobop.starshooter.game.telephony.Server;
+import mse.tsm.mobop.starshooter.game.telephony.Client;
 import mse.tsm.mobop.starshooter.game.tools.GameActivity;
 import mse.tsm.mobop.starshooter.game.tools.GameListener;
 
@@ -26,6 +29,8 @@ public class Playground extends GameActivity implements GameListener, Runnable
 	private long startTime = System.nanoTime();
 	private int frameCount = 0;
 	private Boolean isMaster;
+	private String masterSip="";
+	private String additionalText="";
 	public Com com;
 	
 	@Override
@@ -46,6 +51,16 @@ public class Playground extends GameActivity implements GameListener, Runnable
     
 		if (isMaster!=null && savedInstanceState != null && savedInstanceState.containsKey("simulation"))
 			simulation = (Simulation)savedInstanceState.getSerializable("simulation");
+		
+		masterSip = bundle.getString("serverip");
+		if( isMaster )
+		{
+		  additionalText=String.format(getResources().getString(R.string.con_server_ip_is), masterSip);
+		}
+		else
+		{
+      additionalText=String.format(getResources().getString(R.string.con_trycon_to), masterSip); 
+		}
 	}
 	
 	@Override
@@ -81,7 +96,7 @@ public class Playground extends GameActivity implements GameListener, Runnable
 		}
 		else
 		{
-			screen = new StartScreen(gl, activity);
+			screen = new StartScreen(gl, activity, additionalText);
 			Thread t=new Thread(this);
 			t.start();
 		}
@@ -93,6 +108,11 @@ public class Playground extends GameActivity implements GameListener, Runnable
     if( isMaster )
     {
       Server.startServer(StarshooterMain.comPort,this.getApplicationContext(),this);
+    }
+    else
+    {
+      com = new Client(masterSip, StarshooterMain.comPort, this);
+      com.start();
     }
 	}
 	

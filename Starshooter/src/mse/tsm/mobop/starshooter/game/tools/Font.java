@@ -140,9 +140,16 @@ public class Font
 
   public int getStringWidth(String text)
   {
-    Rect rect = new Rect();
-    paint.getTextBounds(text, 0, text.length(), rect);
-    return rect.width();
+    String [] parts = text.split("\n");
+    int maxwidth = 0;
+    for(int i=0;i<parts.length;i++)
+    {
+      String txt=parts[i];
+      Rect rect = new Rect();
+      paint.getTextBounds(txt, 0, txt.length(), rect);
+      maxwidth=Math.max(maxwidth,rect.width());
+    }
+    return maxwidth;
   }
 
   Rect tmpRect = new Rect();

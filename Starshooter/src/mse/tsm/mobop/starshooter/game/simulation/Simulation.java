@@ -24,12 +24,12 @@ public class Simulation extends Thread implements Serializable
 	
 	private Context ctx;
 	private Com com;
+	private float lastTransmittedPosition=10;
 	
 	public Simulation(Context ctx, Com comu )
 	{
 		populate();
 		com = comu;
-		com.setSimulation(this);
 		com.registerSimulation(this);
 		this.ctx = ctx;
 	}
@@ -101,6 +101,7 @@ public class Simulation extends Thread implements Serializable
 				
 				if (ship.position.distance(shot.position) < Ship.SHIP_RADIUS)
 				{					
+				  com.sendMinusOneLife();
 					removedShots.add(shot);
 					shot.hasLeftField = true;
 					ship.lives--;
@@ -154,6 +155,9 @@ public class Simulation extends Thread implements Serializable
 		curShip.position.x -= delta * Ship.SHIP_VELOCITY * scale;
 		if (curShip.position.x < PLAYFIELD_MIN_X)
 			curShip.position.x = PLAYFIELD_MIN_X;
+		
+    if(me)
+      transmitMyPosition();
 	}
 
 	public void moveShipRight(boolean me, float delta, float scale) 
@@ -166,6 +170,9 @@ public class Simulation extends Thread implements Serializable
 		curShip.position.x += delta * Ship.SHIP_VELOCITY * scale;
 		if (curShip.position.x > PLAYFIELD_MAX_X)
 			curShip.position.x = PLAYFIELD_MAX_X;
+		
+    if(me)
+      transmitMyPosition();
 	}
 
 	public void setShipPosition(boolean me, float position)
@@ -177,6 +184,9 @@ public class Simulation extends Thread implements Serializable
     
     if( PLAYFIELD_MIN_X<=position && position<=PLAYFIELD_MAX_X )
       curShip.position.x = position;
+    
+    if(me)
+      transmitMyPosition();
 	}
 	
 	public void shot(boolean me) 
@@ -190,8 +200,19 @@ public class Simulation extends Thread implements Serializable
 			shots.add(curShot);
 			if( listener != null )
 				listener.shot();
+			if(me)
+			  com.sendShot(curShip.position.x);
 		}
 	}		
+	
+	private void transmitMyPosition()
+	{
+	  if( Math.abs(lastTransmittedPosition-ship.position.x)>0.01 )
+	  {
+	    lastTransmittedPosition = ship.position.x;
+      com.setPos(ship.position.x);
+	  }
+	}
 	
 	public void looseLife(boolean me)
 	{

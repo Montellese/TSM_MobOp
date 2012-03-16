@@ -1,7 +1,11 @@
 package mse.tsm.mobop.starshooter;
 
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +20,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -137,6 +145,10 @@ public class StarshooterMain extends Activity
 		    	  Bundle bundle = new Bundle();
 		    	  bundle.putBoolean("isMaster", true);
 		    	  
+		    	  // find out own ip
+            String ip=getLocalIpAddress();
+            bundle.putString("serverip", ip);
+		    	  
 		    		Intent i = new Intent(StarshooterMain.this, Playground.class);
 		    		i.putExtras(bundle);
 		    		StarshooterMain.this.startActivity(i);
@@ -166,6 +178,16 @@ public class StarshooterMain extends Activity
         final AutoCompleteTextView input = (AutoCompleteTextView)dialog.findViewById(R.id.ripp_input);
         final Button button = (Button)dialog.findViewById(R.id.ripp_button);
         final ProgressBar pb = (ProgressBar)dialog.findViewById(R.id.ripp_connectionProgress);
+        
+        // find out own ip
+        String ip=getLocalIpAddress();
+        String []ipd=ip.split("\\.");
+        if( ipd.length == 4 )
+        {
+          String ip2 = ipd[0]+"."+ipd[1]+"."+ipd[2]+".";
+          input.setText(ip2);
+          input.setSelection(ip2.length());
+        }
         
         dialog.setOnKeyListener(new DialogInterface.OnKeyListener()
         {
@@ -213,20 +235,31 @@ public class StarshooterMain extends Activity
             {
               case PROMPT4MASTERIP_STATE_READY:
                 IPchecker ipc = new IPchecker(input.getText().toString());
-                if( ipc.isValid() )
+                if( ipc.isValid() && !input.getText().toString().equals(getLocalIpAddress()) )
                 {
-                  con_masterip=ipc.getDigits();
                   pb.setVisibility(View.VISIBLE);
                   input.setEnabled(false);
                   button.setText(R.string.prompt4ip_abort);
                   button.requestFocus();
                   prompt4masterIp_state = PROMPT4MASTERIP_STATE_WAITING;
-                  /// TODO: Start trying to connect, then start finish(); and close dialog, make sure dialog is as inited
                   
+                  /// TODO: Start trying to connect, then start finish(); and close dialog, make sure dialog is as inited
+                  Bundle bundle = new Bundle();
+                  bundle.putBoolean("isMaster", false);
+                  
+                  // find out own ip
+                  String ip=input.getText().toString();
+                  bundle.putString("serverip", ip);
+                  
+                  Intent i = new Intent(StarshooterMain.this, Playground.class);
+                  i.putExtras(bundle);
+                  StarshooterMain.this.startActivity(i);
+                  
+                  finish();
                 }
                 else
                 {
-                  Toast.makeText(getApplicationContext(), getResources().getString(R.string.prompt4ip_errInvalid).toString(), Toast.LENGTH_SHORT).show();
+                  Toast.makeText(getApplicationContext(), getResources().getString(ipc.isValid()?R.string.prompt4ip_errOwn:R.string.prompt4ip_errInvalid).toString(), Toast.LENGTH_SHORT).show();
                 }
                 break;
               case PROMPT4MASTERIP_STATE_WAITING :
@@ -250,6 +283,45 @@ public class StarshooterMain extends Activity
   }
   
 
+  public String getLocalIpAddress()
+  {
+    WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+    try {
+      WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+      int ip = wifiInfo.getIpAddress();
+      String ipString = String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
+      return ipString;
+    }
+    catch(Exception e)
+    {
+      Toast toast = Toast.makeText( getApplicationContext(), getResources().getString(R.string.wifiman_err_rights), Toast.LENGTH_SHORT);
+      toast.show();
+    }
+    return getResources().getString(R.string.wifi_err_ip);
+    
+    /*get IP from all devices: 
+    try
+    {
+      for (Enumeration<NetworkInterface> en = NetworkInterface
+          .getNetworkInterfaces(); en.hasMoreElements();)
+      {
+        NetworkInterface intf = en.nextElement();
+        for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();)
+        {
+          InetAddress inetAddress = enumIpAddr.nextElement();
+          if (!inetAddress.isLoopbackAddress())
+          {
+            return inetAddress.getHostAddress().toString();
+          }
+        }
+      }
+    } catch (SocketException ex)
+    {
+      Log.e(Log.ERROR, ex.toString());
+    }
+    return null;*/
+  }
+  
   //@Override
   public void onDestroy()
   {
@@ -258,8 +330,8 @@ public class StarshooterMain extends Activity
   }
 }
 
-class IPchecker{
-
+class IPchecker
+{
   private final short VALID_NOT_EVALUATED = 0;
   private final short VALID_EVALUATED_INVALID = 1;
   private final short VALID_EVALUATED_VALID = 2;

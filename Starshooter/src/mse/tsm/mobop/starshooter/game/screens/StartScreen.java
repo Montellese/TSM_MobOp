@@ -13,18 +13,28 @@ public class StartScreen implements GameScreen
 	public boolean isDone = false;
 
 	Font font;
-	Text textTop;
-	Text textBottom;
+	Text textTop,textTop2,textBottom,textBottom2;
 	String textWaitingTop = "Waiting for";
-	String textWaitingBottom = "your opponent";
+	String textWaitingTop2= "your opponent";
+	String textWaitingBottom ="";
+  String textWaitingBottom2 ="";
+	
+	public StartScreen(GL10 gl, GameActivity activity, String additionalText)
+	{
+	  String [] bots=additionalText.split("\n",2);
+    textWaitingBottom = bots[0];
+    textWaitingBottom2= bots.length>=2?bots[1]:"";
+    font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 24, FontStyle.Plain);
+    textTop = font.newText(gl);    textTop.setText(textWaitingTop);
+    textTop2 = font.newText(gl);   textTop2.setText(textWaitingTop2);
+    textBottom = font.newText(gl); textBottom.setText(textWaitingBottom);
+    textBottom2 = font.newText(gl);textBottom2.setText(textWaitingBottom2);
+	}
+  
 	
 	public StartScreen(GL10 gl, GameActivity activity)
-	{			
-		font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 32, FontStyle.Plain);
-		textTop = font.newText(gl);
-		textTop.setText(textWaitingTop);
-		textBottom = font.newText(gl);
-		textBottom.setText(textWaitingBottom);
+	{
+	  this(gl,activity,"");
 	}	
 
 	public boolean isDone() 
@@ -56,18 +66,30 @@ public class StartScreen implements GameScreen
 		GLU.gluOrtho2D( gl, 0, activity.getViewportWidth(), 0, activity.getViewportHeight() );
 		gl.glMatrixMode( GL10.GL_MODELVIEW );
 		gl.glLoadIdentity();
-		
-		gl.glLoadIdentity();
-		float x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingTop) / 2;
-		float y = activity.getViewportHeight() / 2 + font.getLineHeight();
-		gl.glTranslatef(x, y, 0);
-		textTop.render();
-		
-		gl.glLoadIdentity();
-		x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingBottom) / 2;
-		y = activity.getViewportHeight() / 2 - font.getLineHeight();
-		gl.glTranslatef(x, y, 0);
-		textBottom.render();
+
+    gl.glLoadIdentity();
+    float x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingTop) / 2;
+    float y = activity.getViewportHeight() / 2 + font.getLineHeight()*3;
+    gl.glTranslatef(x, y, 0);
+    textTop.render();
+
+    gl.glLoadIdentity();
+    x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingTop2) / 2;
+    y = activity.getViewportHeight() / 2 + font.getLineHeight();
+    gl.glTranslatef(x, y, 0);
+    textTop2.render();
+
+    gl.glLoadIdentity();
+    x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingBottom) / 2;
+    y = activity.getViewportHeight() / 2 - font.getLineHeight();
+    gl.glTranslatef(x, y, 0);
+    textBottom.render();
+    
+    gl.glLoadIdentity();
+    x = activity.getViewportWidth() / 2 - font.getStringWidth(textWaitingBottom2) / 2;
+    y = activity.getViewportHeight() / 2 - font.getLineHeight()*3;
+    gl.glTranslatef(x, y, 0);
+    textBottom2.render();
 		
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 		gl.glDisable(GL10.GL_BLEND);

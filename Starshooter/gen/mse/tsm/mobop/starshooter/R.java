@@ -28,15 +28,20 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
+        public static final int con_server_ip_is=0x7f04000e;
+        public static final int con_trycon_to=0x7f04000f;
         public static final int main_menu_about=0x7f040002;
         public static final int main_menu_connect=0x7f040001;
         public static final int prompt4ip_abort=0x7f040009;
         public static final int prompt4ip_continue=0x7f040008;
         public static final int prompt4ip_errInvalid=0x7f04000a;
+        public static final int prompt4ip_errOwn=0x7f04000b;
         public static final int prompt4ip_hint=0x7f040007;
         public static final int prompt4ip_title=0x7f040006;
         public static final int select_masterSlave_master=0x7f040004;
         public static final int select_masterSlave_slave=0x7f040005;
         public static final int select_masterSlave_title=0x7f040003;
+        public static final int wifi_err_ip=0x7f04000d;
+        public static final int wifiman_err_rights=0x7f04000c;
     }
 }

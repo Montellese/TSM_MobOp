@@ -1,5 +1,7 @@
 package mse.tsm.mobop.starshooter.game.telephony;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
@@ -11,6 +13,8 @@ public abstract class Com extends Thread
   protected static Simulation sim;
   protected Boolean connectionSetup=false;
   protected Rprotocoll kkp;
+  protected PrintWriter out = null;
+  protected BufferedReader in;
   
   protected Com(Context ctx)
   {
@@ -25,17 +29,30 @@ public abstract class Com extends Thread
 
   public void registerSimulation(Simulation sim)
   {
-    this.sim=sim;
+    Com.sim=sim;
+    kkp.sim = sim;
   }
   
   public boolean connectionSetup()
   {
     return connectionSetup;
   }
-  
-  public void setSimulation(Simulation sim)
+
+  public void setPos(float pos)
   {
-    Com.sim=sim;
-    kkp.sim = sim;
+    if(out!=null && connectionSetup() )
+      out.println(kkp.sendPos(pos));
+  }
+  
+  public void sendShot(float pos)
+  {
+    if(out!=null && connectionSetup() )
+      out.println(kkp.sendShot(pos));
+  }
+
+  public void sendMinusOneLife()
+  {
+    if(out!=null && connectionSetup() )
+      out.println(kkp.sendMinusOneLife());
   }
 }

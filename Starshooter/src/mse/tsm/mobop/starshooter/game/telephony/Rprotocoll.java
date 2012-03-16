@@ -46,7 +46,10 @@ public class Rprotocoll
         e1.printStackTrace();
       }
     if( theInput.length() < 6 )
+    {
+      connectionSetUp = false;
       return theOutput;
+    }
     
     String prefix = theInput.length()>=3?theInput.substring(0,3):"";
     String command= theInput.length()>=7?theInput.substring(4,7):"";
@@ -62,7 +65,8 @@ public class Rprotocoll
     else if( prefix.equals("BYE") )
     {
       state=0;
-      /// TODO: FINISH GAME
+      /// FINISH GAME
+      connectionSetUp = false;
     }
     else
       switch(state)
@@ -74,9 +78,9 @@ public class Rprotocoll
             {
               if( param.equals(ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName) )
               {
-                theOutput="HLO SRV";
+                theOutput="HLO CLT";
                 state++;
-                /// TODO: START GAME
+                // START GAME
                 connectionSetUp = true;
               }
             } catch (NameNotFoundException e)
@@ -93,21 +97,26 @@ public class Rprotocoll
             if( command.equals("POS") )
             {
               float newpos=Float.parseFloat(param);
-              sim.setShipPosition(false, newpos);
+              if(sim!=null)
+                sim.setShipPosition(false, newpos);
               theOutput="SET OK!";
             }
             // shot position
             else if( command.equals("SHT") )
             {
               float newpos=Float.parseFloat(param);
-              sim.setShipPosition(false, newpos);
-              sim.shot(false);
+              if(sim!=null)
+              {
+                sim.setShipPosition(false, newpos);
+                sim.shot(false);
+              }
               theOutput="SET OK!";
             }
             // ship destroyed
             else if( command.equals("DST") )
             {
-              sim.looseLife(false);
+              if(sim!=null)
+                sim.looseLife(false);
               theOutput="SET OK!";
             }
             // answer ok
@@ -129,12 +138,16 @@ public class Rprotocoll
   public String processClientInput(String theInput)
   {
     String theOutput = "BYE";
+
+    if( theInput.length() < 6 )
+    {
+      connectionSetUp = false;
+      return theOutput;
+    }
     
     String prefix = theInput.length()>=3?theInput.substring(0,3):"";
-    if(prefix.equals("BYE"))
-      return "BYE";
     String command= theInput.length()>=7?theInput.substring(4,7):"";
-    String param  = theInput.length()>9?theInput.substring(9):"";
+    String param  = theInput.length()>8?theInput.substring(8):"";
     
     if( prefix.equals("FOO") && command.equals("BAR") )
     {
@@ -151,8 +164,9 @@ public class Rprotocoll
               if( param.equals(ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName) )
               {
                 state++;
-                theOutput=null;
-                /// TODO: START GAME
+                theOutput="HLO CLT "+ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName;
+                // START GAME
+                connectionSetUp = true;
               }
             } catch (NameNotFoundException e)
             {
@@ -169,21 +183,26 @@ public class Rprotocoll
             if( command.equals("POS") )
             {
               float newpos=Float.parseFloat(param);
-              sim.setShipPosition(false, newpos);
+              if(sim!=null)
+                sim.setShipPosition(false, newpos);
               theOutput="SET OK!";
             }
             // shot position
             else if( command.equals("SHT") )
             {
               float newpos=Float.parseFloat(param);
-              sim.setShipPosition(false, newpos);
-              sim.shot(false);
+              if(sim!=null)
+              {
+                sim.setShipPosition(false, newpos);
+                sim.shot(false);
+              }
               theOutput="SET OK!";
             }
             // ship destroyed
             else if( command.equals("DST") )
             {
-              sim.looseLife(false);
+              if(sim!=null)
+                sim.looseLife(false);
               theOutput="SET OK!";
             }
             // answer ok
@@ -191,8 +210,11 @@ public class Rprotocoll
             {
               theOutput=null;
             }
+          }else if(prefix.equals("HLO") && command.equals("CLT"))
+          {
+            theOutput=null;
           }
-          break;
+          break;          
         default:
           theOutput="BYE";
           break;
@@ -207,8 +229,15 @@ public class Rprotocoll
     return "SET POS "+pos;
   }
   
-  public String sendShoot(float pos)
+  public String sendShot(float pos)
   {
     return "SET SHT "+pos;
   }
+
+  public String sendMinusOneLife()
+  {
+    return "SET DST";
+  }
+
+  
 }

@@ -14,6 +14,13 @@
   <string name="prompt4ip_continue">connect</string>
   <string name="prompt4ip_abort">abort</string>
   <string name="prompt4ip_errInvalid">this is not a valid ip</string>
+  <string name="prompt4ip_errOwn">This is your own ip. \nIf you havn\'t any friends you won\'t be able to play.</string>
+  
+  <string name="wifiman_err_rights">Insufficent rights to access WiFi Service\nPlease check permissions.</string>
+  <string name="wifi_err_ip">unknown ip</string>
+  <string name="con_server_ip_is">Server ip is\n%s</string>
+  <string name="con_trycon_to">Try reaching server\nat %s</string>
+  
   
   
 </resources>

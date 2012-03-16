@@ -91,8 +91,8 @@ public class Server extends Com
     try
     {
       connectionSetup = false;
-      PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-      BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      out = new PrintWriter(socket.getOutputStream(), true);
+      in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       String inputLine, outputLine;
       kkp = new Rprotocoll(ctx/*socket.getInetAddress()*/);
   
@@ -112,7 +112,7 @@ public class Server extends Com
            
            connectionSetup = kkp.getConnectionSetUp();
            
-           if (outputLine.equals("BYE"))
+           if( outputLine != null && outputLine.equals("BYE"))
               break;
       }
       connectionSetup=false;
