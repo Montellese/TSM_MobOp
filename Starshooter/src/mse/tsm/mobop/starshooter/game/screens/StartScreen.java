@@ -10,7 +10,7 @@ import mse.tsm.mobop.starshooter.game.tools.GameActivity;
 
 public class StartScreen implements GameScreen
 {	
-	boolean isDone = false;
+	public boolean isDone = false;
 
 	Font font;
 	Text textTop;

@@ -6,6 +6,7 @@ import mse.tsm.mobop.starshooter.game.Renderer;
 import mse.tsm.mobop.starshooter.game.SoundManager;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
 import mse.tsm.mobop.starshooter.game.simulation.SimulationListener;
+import mse.tsm.mobop.starshooter.game.telephony.Com;
 import mse.tsm.mobop.starshooter.game.tools.GameActivity;
 
 public class GameLoop implements GameScreen, SimulationListener
@@ -16,9 +17,9 @@ public class GameLoop implements GameScreen, SimulationListener
 	
 	boolean wasTouched = false;
 
-	public GameLoop(GL10 gl, GameActivity activity)
+	public GameLoop(GL10 gl, GameActivity activity, Com com)
 	{
-		simulation = new Simulation();
+		simulation = new Simulation(activity.getApplicationContext(), com);
 		simulation.listener = this;
 		renderer = new Renderer(gl, activity);
 		soundManager = new SoundManager(activity);

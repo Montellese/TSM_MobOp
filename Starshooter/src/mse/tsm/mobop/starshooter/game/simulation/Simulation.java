@@ -3,7 +3,10 @@ package mse.tsm.mobop.starshooter.game.simulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Simulation implements Serializable
+import android.content.Context;
+import mse.tsm.mobop.starshooter.game.telephony.*;
+
+public class Simulation extends Thread implements Serializable
 {		
 	public final static float PLAYFIELD_MIN_X = -0.5f;
 	public final static float PLAYFIELD_MAX_X = 0.5f;
@@ -19,10 +22,18 @@ public class Simulation implements Serializable
 	private ArrayList<Shot> removedShots = new ArrayList<Shot>();
 	private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>( );
 	
-	public Simulation()
+	private Context ctx;
+	private Com com;
+	
+	public Simulation(Context ctx, Com comu )
 	{
 		populate();
+		com = comu;
+		com.setSimulation(this);
+		com.registerSimulation(this);
+		this.ctx = ctx;
 	}
+	
 	
 	private void populate()
 	{
@@ -105,6 +116,7 @@ public class Simulation implements Serializable
 				shots.remove(removedShots.get(i));
 		}
 		
+		/* Not handling oppponent on this device
 		if (!shipOpponent.isExploding)
 		{
 			for (int i = 0; i < shots.size(); i++)
@@ -125,10 +137,11 @@ public class Simulation implements Serializable
 					break;
 				}			
 			}
-			
+		
 			for (int i = 0; i < removedShots.size(); i++)		
 				shots.remove(removedShots.get(i));
 		}
+    */
 	}
 	
 	public void moveShipLeft(boolean me, float delta, float scale) 
@@ -155,6 +168,17 @@ public class Simulation implements Serializable
 			curShip.position.x = PLAYFIELD_MAX_X;
 	}
 
+	public void setShipPosition(boolean me, float position)
+	{
+    Ship curShip = me ? ship : shipOpponent;
+        
+    if (curShip.isExploding)
+      return;
+    
+    if( PLAYFIELD_MIN_X<=position && position<=PLAYFIELD_MAX_X )
+      curShip.position.x = position;
+	}
+	
 	public void shot(boolean me) 
 	{	
 		Ship curShip = me ? ship : shipOpponent;
@@ -162,10 +186,21 @@ public class Simulation implements Serializable
 		
 		if (curShot == null && !curShip.isExploding)
 		{
-			curShot = new Shot(curShip.position, false);			
+			curShot = new Shot(curShip.position, !me);
 			shots.add(curShot);
 			if( listener != null )
 				listener.shot();
 		}
 	}		
+	
+	public void looseLife(boolean me)
+	{
+    Ship curShip = me ? ship : shipOpponent;
+    
+    curShip.lives--;
+    curShip.isExploding = true;
+    explosions.add(new Explosion(curShip.position));
+    if (listener != null)
+      listener.explosion();
+	}
 }

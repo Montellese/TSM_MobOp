@@ -38,6 +38,8 @@ public class StarshooterMain extends Activity
 
   MenuAdapter adapter;
   
+  public static int comPort = 5432;
+  
   
   
   final int DIALOG_SLAVE_PROMPT4MASTER_IP = 1;
@@ -56,13 +58,11 @@ public class StarshooterMain extends Activity
   /** current state of `prompt 4 master ip'-dialog **/
   private short prompt4masterIp_state = PROMPT4MASTERIP_STATE_READY;
   
-  private Playground pg;
-  
   // Connection settings
   /** defines if we are master **/
   private boolean con_master=true;
   
-  /** masters ip address **/
+  /** master's ip address **/
   private Integer [] con_masterip;
 
   //@Override
@@ -134,7 +134,11 @@ public class StarshooterMain extends Activity
 		    {
 		    	// master
 		    	case 0:
+		    	  Bundle bundle = new Bundle();
+		    	  bundle.putBoolean("isMaster", true);
+		    	  
 		    		Intent i = new Intent(StarshooterMain.this, Playground.class);
+		    		i.putExtras(bundle);
 		    		StarshooterMain.this.startActivity(i);
 		    		break;
 		      

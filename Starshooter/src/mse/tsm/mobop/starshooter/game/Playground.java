@@ -7,21 +7,26 @@ import android.view.WindowManager;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import mse.tsm.mobop.starshooter.StarshooterMain;
 import mse.tsm.mobop.starshooter.game.screens.GameLoop;
 import mse.tsm.mobop.starshooter.game.screens.GameOverScreen;
 import mse.tsm.mobop.starshooter.game.screens.GameScreen;
 import mse.tsm.mobop.starshooter.game.screens.StartScreen;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
+import mse.tsm.mobop.starshooter.game.telephony.Com;
+import mse.tsm.mobop.starshooter.game.telephony.Server;
 import mse.tsm.mobop.starshooter.game.tools.GameActivity;
 import mse.tsm.mobop.starshooter.game.tools.GameListener;
 
-public class Playground extends GameActivity implements GameListener 
+public class Playground extends GameActivity implements GameListener, Runnable
 {
 	private GameScreen screen = null;
 	private Simulation simulation = null;
 	
 	private long startTime = System.nanoTime();
 	private int frameCount = 0;
+	private Boolean isMaster;
+	public Com com;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -35,8 +40,11 @@ public class Playground extends GameActivity implements GameListener
 		super.onCreate(savedInstanceState);
 	  
 		this.setGameListener(this);
+
+    Bundle bundle = this.getIntent().getExtras();
+    isMaster = bundle.getBoolean("isMaster");
     
-		if (savedInstanceState != null && savedInstanceState.containsKey("simulation"))
+		if (isMaster!=null && savedInstanceState != null && savedInstanceState.containsKey("simulation"))
 			simulation = (Simulation)savedInstanceState.getSerializable("simulation");
 	}
 	
@@ -74,25 +82,45 @@ public class Playground extends GameActivity implements GameListener
 		else
 		{
 			screen = new StartScreen(gl, activity);
+			Thread t=new Thread(this);
+			t.start();
 		}
 	}
 
+	public void run()
+	{
+    // setup communication
+    if( isMaster )
+    {
+      Server.startServer(StarshooterMain.comPort,this.getApplicationContext(),this);
+    }
+	}
+	
 	public void mainLoopIteration(GameActivity activity, GL10 gl) 
 	{
 		screen.update(activity);
 		screen.render(gl, activity);
+		
+		if(screen instanceof StartScreen && com != null && com.connectionSetup() )
+    {
+      ((StartScreen) screen).isDone = true;
+    }
 		
 		if (screen.isDone())
 		{
 			screen.dispose();
 			
 			if (screen instanceof StartScreen)
-				screen = new GameLoop(gl, activity);
+				screen = new GameLoop(gl, activity, com);
 			else if (screen instanceof GameLoop)
+			{
 				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.ship.lives > 0);
+				com = null;
+			}
 			else if (screen instanceof GameOverScreen)
 				screen = new StartScreen(gl, activity);
 		}
+		  
 		
 		frameCount++;
 		if (System.nanoTime() - startTime > 1000000000)
