@@ -3,7 +3,6 @@ package mse.tsm.mobop.starshooter.game.screens;
 import javax.microedition.khronos.opengles.GL10;
 
 import mse.tsm.mobop.starshooter.game.Renderer;
-import mse.tsm.mobop.starshooter.game.SoundManager;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
 import mse.tsm.mobop.starshooter.game.simulation.SimulationListener;
 import mse.tsm.mobop.starshooter.game.telephony.Com;
@@ -13,7 +12,6 @@ public class GameLoop implements GameScreen, SimulationListener
 {
 	public Simulation simulation;
 	Renderer renderer;	
-	SoundManager soundManager;
 	
 	boolean wasTouched = false;
 
@@ -22,7 +20,6 @@ public class GameLoop implements GameScreen, SimulationListener
 		simulation = new Simulation(activity.getApplicationContext(), com);
 		simulation.listener = this;
 		renderer = new Renderer(gl, activity);
-		soundManager = new SoundManager(activity);
 	}
 	
 	public GameLoop(GL10 gl, GameActivity activity, Simulation simulation) 
@@ -30,7 +27,6 @@ public class GameLoop implements GameScreen, SimulationListener
 		this.simulation = simulation;
 		this.simulation.listener = this;
 		renderer = new Renderer(gl, activity);
-		soundManager = new SoundManager(activity);
 	}
 
 	public void render(GL10 gl, GameActivity activity) 
@@ -69,16 +65,15 @@ public class GameLoop implements GameScreen, SimulationListener
 	public void dispose()
 	{
 		renderer.dispose();
-		soundManager.dispose();
 	}
 
 	public void explosion() 
 	{
-		soundManager.playExplosionSound();
+		// Nothing to be done
 	}
 
 	public void shot() 
 	{	
-		soundManager.playShotSound();
+		// Nothing to be done
 	}
 }

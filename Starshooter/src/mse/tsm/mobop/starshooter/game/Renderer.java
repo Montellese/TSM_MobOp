@@ -150,7 +150,7 @@ public class Renderer
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}	
 
-	private void renderBackground(GL10 gl)
+	/*private void renderBackground(GL10 gl)
 	{
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
@@ -158,7 +158,7 @@ public class Renderer
 		gl.glLoadIdentity();
 		backgroundTexture.bind();
 		backgroundMesh.render(PrimitiveType.TriangleFan);
-	}
+	}*/
 	
 	private void setProjectionAndCamera(GL10 gl, Ship ship, GameActivity activity)
 	{
@@ -216,7 +216,7 @@ public class Renderer
 		}
 	}
 	
-	private void renderExplosions(GL10 gl, ArrayList<Explosion> explosions) 
+	/*private void renderExplosions(GL10 gl, ArrayList<Explosion> explosions) 
 	{	
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -230,7 +230,7 @@ public class Renderer
 			gl.glPopMatrix();
 		}			
 		gl.glDisable(GL10.GL_BLEND);
-	}
+	}*/
 	
 	public void dispose()
 	{

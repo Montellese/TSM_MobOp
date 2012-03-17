@@ -1,61 +1,44 @@
 package mse.tsm.mobop.starshooter;
 
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import mse.tsm.mobop.starshooter.game.Playground;
 
-import android.R.bool;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
-import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class StarshooterMain extends Activity
 {
-
   ListView list;
-
   MenuAdapter adapter;
   
   public static int comPort = 5432;
-  
-  
   
   final int DIALOG_SLAVE_PROMPT4MASTER_IP = 1;
 
   private ArrayList<ListObject> listItems;
 
-  private String[] mmenuItems;
-  
+  private String[] menuItems;
   
   /** `prompt 4 master ip'-dialog is in ready state, prepared for user input **/
   private final short PROMPT4MASTERIP_STATE_READY = 0;
@@ -68,7 +51,7 @@ public class StarshooterMain extends Activity
   
   // Connection settings
   /** defines if we are master **/
-  private boolean con_master=true;
+  private boolean con_master = true;
   
   /** master's ip address **/
   private Integer [] con_masterip;
@@ -80,12 +63,12 @@ public class StarshooterMain extends Activity
     setContentView(R.layout.main);
     
     listItems = new ArrayList<ListObject>();
-    mmenuItems = new String[2];
+    menuItems = new String[2];
     // fill up menu
-      // connect
+    // connect
     ListObject lo0 = new ListObject(getResources().getString(R.string.main_menu_connect), "");
     listItems.add(lo0);
-      // about
+    // about
     StringBuilder sb = new StringBuilder();
     sb.append(getResources().getString(R.string.app_name));
     sb.append(" ");
@@ -101,14 +84,14 @@ public class StarshooterMain extends Activity
     listItems.add(new ListObject(getResources().getString(R.string.main_menu_about), sb.toString()));
 
     list = (ListView) findViewById(R.id.mainmenu);
-    adapter = new MenuAdapter(this, mmenuItems, listItems);
+    adapter = new MenuAdapter(this, menuItems, listItems);
     list.setAdapter(adapter);
     
     list.setOnItemClickListener(new ListView.OnItemClickListener()
     {
       public void onItemClick(AdapterView<?> parent, View view, int position, long id)
       {
-        switch(position)
+        switch (position)
         {
           // try to connect
           case 0:
@@ -138,16 +121,16 @@ public class StarshooterMain extends Activity
     {
         public void onClick(DialogInterface dialog, int selectedItem)
         {
-        	switch( selectedItem )
+        	switch (selectedItem)
 		    {
 		    	// master
 		    	case 0:
-		    	  Bundle bundle = new Bundle();
-		    	  bundle.putBoolean("isMaster", true);
+		    		Bundle bundle = new Bundle();
+		    		bundle.putBoolean("isMaster", true);
 		    	  
-		    	  // find out own ip
-            String ip=getLocalIpAddress();
-            bundle.putString("serverip", ip);
+		    	  	// find out own ip
+		            String ip=getLocalIpAddress();
+		            bundle.putString("serverip", ip);
 		    	  
 		    		Intent i = new Intent(StarshooterMain.this, Playground.class);
 		    		i.putExtras(bundle);
@@ -167,7 +150,7 @@ public class StarshooterMain extends Activity
     
   protected Dialog onCreateDialog(int id) {
     Dialog dialog;
-    switch(id)
+    switch (id)
     {
       case DIALOG_SLAVE_PROMPT4MASTER_IP:
         dialog = new Dialog(this);
@@ -182,7 +165,7 @@ public class StarshooterMain extends Activity
         // find out own ip
         String ip=getLocalIpAddress();
         String []ipd=ip.split("\\.");
-        if( ipd.length == 4 )
+        if (ipd.length == 4)
         {
           String ip2 = ipd[0]+"."+ipd[1]+"."+ipd[2]+".";
           input.setText(ip2);
@@ -194,9 +177,9 @@ public class StarshooterMain extends Activity
           //@Override
           public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event)
           {
-            if(event.getAction() == KeyEvent.ACTION_DOWN)
+            if (event.getAction() == KeyEvent.ACTION_DOWN)
             {
-              if(keyCode == KeyEvent.KEYCODE_BACK)
+              if (keyCode == KeyEvent.KEYCODE_BACK)
               {
                 pb.setVisibility(View.INVISIBLE);
                 input.setEnabled(true);
@@ -214,9 +197,9 @@ public class StarshooterMain extends Activity
         {
           public boolean onKey(View v, int keyCode, KeyEvent event)
           {
-            if(event.getAction() == KeyEvent.ACTION_DOWN)
+            if (event.getAction() == KeyEvent.ACTION_DOWN)
             {
-              if(keyCode == KeyEvent.KEYCODE_ENTER)
+              if (keyCode == KeyEvent.KEYCODE_ENTER)
               {
                 button.performClick();
                 return true;
@@ -231,11 +214,11 @@ public class StarshooterMain extends Activity
           //@Override
           public void onClick(View arg0)
           {
-            switch( prompt4masterIp_state )
+            switch (prompt4masterIp_state)
             {
               case PROMPT4MASTERIP_STATE_READY:
                 IPchecker ipc = new IPchecker(input.getText().toString());
-                if( ipc.isValid() && !input.getText().toString().equals(getLocalIpAddress()) )
+                if (ipc.isValid() && !input.getText().toString().equals(getLocalIpAddress()))
                 {
                   pb.setVisibility(View.VISIBLE);
                   input.setEnabled(false);
@@ -286,7 +269,8 @@ public class StarshooterMain extends Activity
   public String getLocalIpAddress()
   {
     WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-    try {
+    try
+    {
       WifiInfo wifiInfo = wifiManager.getConnectionInfo();
       int ip = wifiInfo.getIpAddress();
       String ipString = String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));

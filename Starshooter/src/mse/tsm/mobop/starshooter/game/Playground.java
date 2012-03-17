@@ -46,21 +46,17 @@ public class Playground extends GameActivity implements GameListener, Runnable
 	  
 		this.setGameListener(this);
 
-    Bundle bundle = this.getIntent().getExtras();
-    isMaster = bundle.getBoolean("isMaster");
+	    Bundle bundle = this.getIntent().getExtras();
+	    isMaster = bundle.getBoolean("isMaster");
     
 		if (isMaster!=null && savedInstanceState != null && savedInstanceState.containsKey("simulation"))
 			simulation = (Simulation)savedInstanceState.getSerializable("simulation");
 		
 		masterSip = bundle.getString("serverip");
-		if( isMaster )
-		{
-		  additionalText=String.format(getResources().getString(R.string.con_server_ip_is), masterSip);
-		}
+		if (isMaster)
+			additionalText = String.format(getResources().getString(R.string.con_server_ip_is), masterSip);
 		else
-		{
-      additionalText=String.format(getResources().getString(R.string.con_trycon_to), masterSip); 
-		}
+			additionalText = String.format(getResources().getString(R.string.con_trycon_to), masterSip);
 	}
 	
 	@Override
@@ -104,16 +100,16 @@ public class Playground extends GameActivity implements GameListener, Runnable
 
 	public void run()
 	{
-    // setup communication
-    if( isMaster )
-    {
-      Server.startServer(StarshooterMain.comPort,this.getApplicationContext(),this);
-    }
-    else
-    {
-      com = new Client(masterSip, StarshooterMain.comPort, this);
-      com.start();
-    }
+	    // setup communication
+	    if( isMaster )
+	    {
+	    	Server.startServer(StarshooterMain.comPort,this.getApplicationContext(),this);
+	    }
+	    else
+	    {
+	    	com = new Client(masterSip, StarshooterMain.comPort, this);
+	    	com.start();
+	    }
 	}
 	
 	public void mainLoopIteration(GameActivity activity, GL10 gl) 
@@ -121,10 +117,10 @@ public class Playground extends GameActivity implements GameListener, Runnable
 		screen.update(activity);
 		screen.render(gl, activity);
 		
-		if(screen instanceof StartScreen && com != null && com.connectionSetup() )
-    {
-      ((StartScreen) screen).isDone = true;
-    }
+		if (screen instanceof StartScreen && com != null && com.connectionSetup())
+	    {
+	      ((StartScreen)screen).isDone = true;
+	    }
 		
 		if (screen.isDone())
 		{
