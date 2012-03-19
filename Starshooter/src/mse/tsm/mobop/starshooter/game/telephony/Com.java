@@ -11,7 +11,7 @@ public abstract class Com extends Thread
 {
   protected static Context ctx;
   protected static Simulation sim;
-  protected Boolean connectionSetup=false;
+  protected boolean connectionIsSetup=false;
   protected Rprotocoll kkp;
   protected PrintWriter out = null;
   protected BufferedReader in;
@@ -35,7 +35,7 @@ public abstract class Com extends Thread
   
   public boolean connectionSetup()
   {
-    return connectionSetup;
+    return connectionIsSetup;
   }
 
   public void setPos(float pos)

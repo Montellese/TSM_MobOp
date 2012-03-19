@@ -79,8 +79,12 @@ public class Client extends Com
       {
         out.println(outputLine);
         if (outputLine.equals("BYE"))
-        break;
+        {
+          connectionIsSetup = false;
+          break;
+        }
       }
+      connectionIsSetup = kkp.getConnectionSetUp();
     }
     disconnect();
     out.close();

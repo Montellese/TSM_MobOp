@@ -90,7 +90,7 @@ public class Server extends Com
     serverOn();
     try
     {
-      connectionSetup = false;
+      connectionIsSetup = false;
       out = new PrintWriter(socket.getOutputStream(), true);
       in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
       String inputLine, outputLine;
@@ -110,12 +110,12 @@ public class Server extends Com
            if( outputLine != null )
              out.println(outputLine);
            
-           connectionSetup = kkp.getConnectionSetUp();
+           connectionIsSetup = kkp.getConnectionSetUp();
            
            if( outputLine != null && outputLine.equals("BYE"))
               break;
       }
-      connectionSetup=false;
+      connectionIsSetup=false;
       out.close();
       in.close();
       socket.close();
