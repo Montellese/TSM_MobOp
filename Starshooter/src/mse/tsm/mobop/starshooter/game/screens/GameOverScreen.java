@@ -2,23 +2,11 @@ package mse.tsm.mobop.starshooter.game.screens;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import mse.tsm.mobop.starshooter.game.SoundManager;
 import mse.tsm.mobop.starshooter.game.tools.Font;
 import mse.tsm.mobop.starshooter.game.tools.Font.FontStyle;
 import mse.tsm.mobop.starshooter.game.tools.Font.Text;
 import mse.tsm.mobop.starshooter.game.tools.GameActivity;
-import mse.tsm.mobop.starshooter.game.tools.Mesh;
-import mse.tsm.mobop.starshooter.game.tools.Mesh.PrimitiveType;
-import mse.tsm.mobop.starshooter.game.tools.Texture;
-import mse.tsm.mobop.starshooter.game.tools.Texture.TextureFilter;
-import mse.tsm.mobop.starshooter.game.tools.Texture.TextureWrap;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.opengl.GLU;
-import android.util.Log;
 
 public class GameOverScreen implements GameScreen 
 {	

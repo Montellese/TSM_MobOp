@@ -9,5 +9,4 @@ public class ListViewMenu extends ListView
   {
     super(context);
   }
-  
 }

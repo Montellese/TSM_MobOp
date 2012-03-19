@@ -18,26 +18,31 @@ public class MenuAdapter extends BaseAdapter
   private ArrayList<ListObject> list;
   private static LayoutInflater inflater=null;
   
-  public MenuAdapter(Activity a, String[] d, ArrayList<ListObject> l) {
+  public MenuAdapter(Activity a, String[] d, ArrayList<ListObject> l)
+  {
       activity = a;
       data=d;
       list = l;
       inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
   }
 
-  public int getCount() {
+  public int getCount()
+  {
       return data.length;
   }
 
-  public Object getItem(int position) {
+  public Object getItem(int position)
+  {
       return position;
   }
 
-  public long getItemId(int position) {
+  public long getItemId(int position)
+  {
       return position;
   }
   
-  public static class ViewHolder{
+  public static class ViewHolder
+  {
       public TextView text;
       public TextView subtext;
   }
@@ -46,7 +51,8 @@ public class MenuAdapter extends BaseAdapter
   {
       View vi=convertView;
       ViewHolder holder;
-      if(convertView==null){
+      if(convertView==null)
+      {
           vi = inflater.inflate(R.layout.item, null);
           holder=new ViewHolder();
           holder.text=(TextView)vi.findViewById(R.id.text);
