@@ -16,15 +16,20 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StarshooterMain extends Activity
@@ -100,7 +105,30 @@ public class StarshooterMain extends Activity
             
           // About
           case 1:
-            // Don't do anything
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.about_toast, (ViewGroup) findViewById(R.id.toast_layout_root));
+            
+            // set icon
+            ImageView image = (ImageView) layout.findViewById(R.id.image);
+            image.setImageResource(R.drawable.ic_launcher);
+            
+            // set title
+            TextView title=(TextView) layout.findViewById(R.id.title);
+            StringBuilder sb = new StringBuilder();
+            sb.append(getResources().getString(R.string.app_name)); sb.append(" ");
+            try{
+              sb.append( getPackageManager().getPackageInfo(getPackageName(), 0).versionName );
+            } catch (NameNotFoundException e){sb.append("?.?.?");}
+            title.setText(sb);
+            
+            TextView text = (TextView) layout.findViewById(R.id.text);
+            text.setText( getResources().getString(R.string.about_text) );
+            
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+            toast.setDuration(Toast.LENGTH_LONG);
+            toast.setView(layout);
+            toast.show();
             break;
         }
       }
