@@ -32,6 +32,8 @@ public class Renderer
 	Mesh explosionMesh;
 	Texture explosionTexture;
 	float shippos=0.0f, opponenshippos=0.0f;
+	static final float maxTurnAngle=75f;
+	static final float turnAmplifier=450f;
 	
 	Font font;
 	Text text;
@@ -216,17 +218,21 @@ public class Renderer
 		
 		//shipTexture.bind();
 		gl.glPushMatrix();
-		gl.glTranslatef(ship.position.x, ship.position.y, ship.position.z);
+		gl.glTranslatef(ship.position.x, ship.position.y, .1f /*ship.position.z*/);
 		if (ship.isOpponent)
 		{
+		  float vel=ship.position.x-opponenshippos;
 			gl.glRotatef(180, 0, 0, 1);
+      gl.glRotatef(Math.max(-maxTurnAngle,Math.min(maxTurnAngle,vel*turnAmplifier )), 0, 1, 0);
       shipOpponentMesh_base.render(PrimitiveType.Triangles);
       shipOpponentMesh_tail.render(PrimitiveType.Triangles);
+      
+      opponenshippos = ship.position.x;
 		}
 		else
 		{
 		  float vel=ship.position.x-shippos;
-      gl.glRotatef(Math.max(-20.0f,Math.min(20.0f,vel*(-400.0f) )), 0, 1, 0);
+      gl.glRotatef(Math.max(-maxTurnAngle,Math.min(maxTurnAngle,vel*turnAmplifier )), 0, 1, 0);
       shipMesh_base.render(PrimitiveType.Triangles);
 			shipMesh_tail.render(PrimitiveType.Triangles);
 
