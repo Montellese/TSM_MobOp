@@ -199,15 +199,15 @@ public class Renderer
         // When using GL_MODELVIEW, you must set the view point
         GLU.gluLookAt(gl, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
 	}
-	
-	private void set2DProjection( GL10 gl, GameActivity activity )
-	{
-		gl.glMatrixMode(GL10.GL_PROJECTION);
-		gl.glLoadIdentity();
-		GLU.gluOrtho2D(gl, 0, activity.getViewportWidth(), 0, activity.getViewportHeight());
-		gl.glMatrixMode(GL10.GL_MODELVIEW);
-		gl.glLoadIdentity();
-	}
+
+  private void set2DProjection( GL10 gl, GameActivity activity )
+  {
+    gl.glMatrixMode(GL10.GL_PROJECTION);
+    gl.glLoadIdentity();
+    GLU.gluOrtho2D(gl, 0, activity.getViewportWidth(), 0, activity.getViewportHeight());    
+    gl.glMatrixMode(GL10.GL_MODELVIEW);
+    gl.glLoadIdentity();
+  }
 	
 	private void renderShip(GL10 gl, Ship ship, GameActivity activity)
 	{
@@ -226,7 +226,7 @@ public class Renderer
 		else
 		{
 		  float vel=ship.position.x-shippos;
-      gl.glRotatef(Math.max(-35.0f,Math.min(35.0f,vel*(-20.0f) )), 0, 1, 0);
+      gl.glRotatef(Math.max(-20.0f,Math.min(20.0f,vel*(-400.0f) )), 0, 1, 0);
       shipMesh_base.render(PrimitiveType.Triangles);
 			shipMesh_tail.render(PrimitiveType.Triangles);
 
