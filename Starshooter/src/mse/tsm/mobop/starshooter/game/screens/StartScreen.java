@@ -45,8 +45,8 @@ public class StartScreen implements GameScreen
 	public void update(GameActivity activity) 
 	{
 		// TODO: Update when both players are ready
-		if (activity.isTouched())
-			isDone = true;
+		/*if (activity.isTouched())
+			isDone = true;*/
 	}
 	
 	public void render(GL10 gl, GameActivity activity) 

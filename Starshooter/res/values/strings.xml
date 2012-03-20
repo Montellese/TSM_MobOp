@@ -20,5 +20,5 @@
   <string name="wifi_err_ip">Unknown IP</string>
   <string name="con_server_ip_is">Server IP is\n%s</string>
   <string name="con_trycon_to">Trying to reach server\nat %s</string>
-  <string name="about_text">Implemented by\n&gt; Daniel Mäder\n&gt; Sascha Montellese</string>
+  <string name="about_text">Implemented by\n• Daniel Mäder\n• Sascha Montellese</string>
 </resources>
