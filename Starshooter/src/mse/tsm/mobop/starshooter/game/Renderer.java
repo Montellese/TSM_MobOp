@@ -4,11 +4,9 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import mse.tsm.mobop.starshooter.game.simulation.Explosion;
 import mse.tsm.mobop.starshooter.game.simulation.Ship;
 import mse.tsm.mobop.starshooter.game.simulation.Shot;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
-import mse.tsm.mobop.starshooter.game.simulation.Vector;
 import mse.tsm.mobop.starshooter.game.tools.Font;
 import mse.tsm.mobop.starshooter.game.tools.Font.FontStyle;
 import mse.tsm.mobop.starshooter.game.tools.Font.Text;
@@ -16,6 +14,10 @@ import mse.tsm.mobop.starshooter.game.tools.GameActivity;
 import mse.tsm.mobop.starshooter.game.tools.Mesh;
 import mse.tsm.mobop.starshooter.game.tools.Mesh.PrimitiveType;
 import mse.tsm.mobop.starshooter.game.tools.Texture;
+import mse.tsm.mobop.starshooter.game.tools.Texture.TextureFilter;
+import mse.tsm.mobop.starshooter.game.tools.Texture.TextureWrap;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.opengl.GLU;
 
 public class Renderer 
@@ -42,28 +44,28 @@ public class Renderer
 	{
 		try
 		{
-		  // draw own ship
+			// draw own ship
 		    // basement
-      shipMesh_base = new Mesh(gl, 3, true, false, false);
-      shipMesh_base.color(0, 1, 0, 1);
-      shipMesh_base.vertex(-0.075f, 0.0f, 0.0001f);
-      shipMesh_base.color(0, 1, 0, 1);
-      shipMesh_base.vertex(0.075f, 0.0f, 0.0001f);
-      shipMesh_base.color(0, 1, 0, 1);
-      shipMesh_base.vertex(0.0f, 0.18f, 0.0001f);
-        // tail
-      shipMesh_tail = new Mesh(gl, 4, true, false, false);
-      shipMesh_tail.color(0.1f, .66f, 0, 1);
-      shipMesh_tail.vertex(-0.01f, 0.0f, 0.0001f);
-      shipMesh_tail.color(0.1f, .66f, 0, 1);
-      shipMesh_tail.vertex( 0.01f, 0.0f, 0.0001f);
-      shipMesh_tail.color(0.1f, .66f, 0, 1);
-      shipMesh_tail.vertex(0.0f, 0.14f, 0.0001f);
-      shipMesh_tail.color(0.1f, .66f, 0, 1);
-      shipMesh_tail.vertex(0.0f, 0.0f, 0.08f);
+			shipMesh_base = new Mesh(gl, 3, true, false, false);
+			shipMesh_base.color(0, 1, 0, 1);
+			shipMesh_base.vertex(-0.075f, 0.0f, 0.0001f);
+			shipMesh_base.color(0, 1, 0, 1);
+			shipMesh_base.vertex(0.075f, 0.0f, 0.0001f);
+			shipMesh_base.color(0, 1, 0, 1);
+			shipMesh_base.vertex(0.0f, 0.18f, 0.0001f);
+			// tail
+			shipMesh_tail = new Mesh(gl, 4, true, false, false);
+			shipMesh_tail.color(0.1f, .66f, 0, 1);
+			shipMesh_tail.vertex(-0.01f, 0.0f, 0.0001f);
+			shipMesh_tail.color(0.1f, .66f, 0, 1);
+			shipMesh_tail.vertex( 0.01f, 0.0f, 0.0001f);
+			shipMesh_tail.color(0.1f, .66f, 0, 1);
+			shipMesh_tail.vertex(0.0f, 0.14f, 0.0001f);
+			shipMesh_tail.color(0.1f, .66f, 0, 1);
+			shipMesh_tail.vertex(0.0f, 0.0f, 0.08f);
 			
-      // opponen ship
-        //basement
+			// opponen ship
+			//basement
 			shipOpponentMesh_base = new Mesh(gl, 3, true, false, false);
 			shipOpponentMesh_base.color(1, 1, 0, 1);
 			shipOpponentMesh_base.vertex(-0.075f, 0.0f, 0.0001f);
@@ -71,16 +73,16 @@ public class Renderer
 			shipOpponentMesh_base.vertex(0.075f, 0.0f, 0.0001f);
 			shipOpponentMesh_base.color(1, 1, 0, 1);
 			shipOpponentMesh_base.vertex(0.0f, 0.18f, 0.0001f);
-        // tail
+			// tail
 			shipOpponentMesh_tail = new Mesh(gl, 4, true, false, false);
-      shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
-      shipOpponentMesh_tail.vertex(-0.01f, 0.0f, 0.0001f);
-      shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
-      shipOpponentMesh_tail.vertex( 0.01f, 0.0f, 0.0001f);
-      shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
-      shipOpponentMesh_tail.vertex(0.0f, 0.14f, 0.0001f);
-      shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
-      shipOpponentMesh_tail.vertex(0.0f, 0.0f, 0.08f);
+			shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
+			shipOpponentMesh_tail.vertex(-0.01f, 0.0f, 0.0001f);
+			shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
+			shipOpponentMesh_tail.vertex( 0.01f, 0.0f, 0.0001f);
+			shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
+			shipOpponentMesh_tail.vertex(0.0f, 0.14f, 0.0001f);
+			shipOpponentMesh_tail.color(0.66f, .66f, 0, 1);
+			shipOpponentMesh_tail.vertex(0.0f, 0.0f, 0.08f);
 			
 			shotMesh = new Mesh(gl, 100, true, false, false);
 			for (int index = 0; index < 100; index++)
@@ -89,10 +91,6 @@ public class Renderer
 				shotMesh.color(1, 0, 0, 1);
 				shotMesh.vertex((float)(Math.cos(angle) * 0.02), (float)(Math.sin(angle) * 0.02), 0.0001f);
 			}
-			
-			/* TODO
-			shipMesh = MeshLoader.loadObj(gl, activity.getAssets().open( "ship.obj" ));
-			shotMesh = MeshLoader.loadObj(gl, activity.getAssets().open( "shot.obj" ));
 			
 			backgroundMesh = new Mesh(gl, 4, false, true, false);
 			backgroundMesh.texCoord(0, 0);
@@ -104,7 +102,7 @@ public class Renderer
 			backgroundMesh.texCoord(0, 1);
 			backgroundMesh.vertex(-1, -1, 0);
 			
-			explosionMesh = new Mesh(gl, 4 * 16, false, true, false);
+			/*explosionMesh = new Mesh(gl, 4 * 16, false, true, false);
 			for (int row = 0; row < 4; row++)
 			{
 				for (int column = 0; column < 4; column++)
@@ -127,16 +125,12 @@ public class Renderer
 		
 		try
 		{					
-			/*Bitmap bitmap = BitmapFactory.decodeStream(activity.getAssets().open( "ship.png" ));
-			shipTexture = new Texture(gl, bitmap, TextureFilter.MipMap, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
-			bitmap.recycle();
-			
-			bitmap = BitmapFactory.decodeStream( activity.getAssets().open( "planet.jpg" ) );
+			Bitmap bitmap = BitmapFactory.decodeStream(activity.getAssets().open("background.jpg"));
 			backgroundTexture = new Texture(gl, bitmap, TextureFilter.MipMap, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			bitmap.recycle();
 						
-			bitmap = BitmapFactory.decodeStream(activity.getAssets().open( "explode.png" ));
-			explosionTexture = new Texture( gl, bitmap, TextureFilter.MipMap, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+			/*bitmap = BitmapFactory.decodeStream(activity.getAssets().open("explode.png"));
+			explosionTexture = new Texture(gl, bitmap, TextureFilter.MipMap, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			bitmap.recycle();*/
 		}
 		catch( Exception ex )
@@ -153,9 +147,10 @@ public class Renderer
 		gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		gl.glViewport(0, 0, activity.getViewportWidth(), activity.getViewportHeight());
 		
-		//gl.glEnable(GL10.GL_TEXTURE_2D);				
-		// TODO: renderBackground(gl);		
+		gl.glEnable(GL10.GL_TEXTURE_2D);				
+		renderBackground(gl);		
 		
+		gl.glDisable(GL10.GL_TEXTURE_2D);				
 		setProjectionAndCamera(gl, simulation.ship, activity);
 		
 		renderShots(gl, simulation.shots);
@@ -163,11 +158,12 @@ public class Renderer
 		renderShip(gl, simulation.ship, activity);
 		renderShip(gl, simulation.shipOpponent, activity);
 		
-		gl.glEnable(GL10.GL_TEXTURE_2D);
+		//gl.glEnable(GL10.GL_TEXTURE_2D);
 		// TODO: renderExplosions(gl, simulation.explosions);
 		
 		set2DProjection(gl, activity);
 		
+		gl.glEnable(GL10.GL_TEXTURE_2D);
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glTranslatef(8, activity.getViewportHeight() - 8, 0);
@@ -177,7 +173,7 @@ public class Renderer
 		gl.glDisable(GL10.GL_TEXTURE_2D);
 	}	
 
-	/*private void renderBackground(GL10 gl)
+	private void renderBackground(GL10 gl)
 	{
 		gl.glMatrixMode(GL10.GL_PROJECTION);
 		gl.glLoadIdentity();
@@ -185,7 +181,7 @@ public class Renderer
 		gl.glLoadIdentity();
 		backgroundTexture.bind();
 		backgroundMesh.render(PrimitiveType.TriangleFan);
-	}*/
+	}
 	
 	private void setProjectionAndCamera(GL10 gl, Ship ship, GameActivity activity)
 	{
@@ -216,27 +212,26 @@ public class Renderer
 		if (ship.isExploding)
 			return;
 		
-		//shipTexture.bind();
 		gl.glPushMatrix();
 		gl.glTranslatef(ship.position.x, ship.position.y, .1f /*ship.position.z*/);
 		if (ship.isOpponent)
 		{
-		  float vel=ship.position.x-opponenshippos;
+			float vel=ship.position.x-opponenshippos;
 			gl.glRotatef(180, 0, 0, 1);
-      gl.glRotatef(Math.max(-maxTurnAngle,Math.min(maxTurnAngle,vel*turnAmplifier )), 0, 1, 0);
-      shipOpponentMesh_base.render(PrimitiveType.Triangles);
-      shipOpponentMesh_tail.render(PrimitiveType.Triangles);
+			gl.glRotatef(Math.max(-maxTurnAngle,Math.min(maxTurnAngle,vel*turnAmplifier )), 0, 1, 0);
+      		shipOpponentMesh_base.render(PrimitiveType.Triangles);
+      		shipOpponentMesh_tail.render(PrimitiveType.Triangles);
       
-      opponenshippos = ship.position.x;
+      		opponenshippos = ship.position.x;
 		}
 		else
 		{
-		  float vel=ship.position.x-shippos;
-      gl.glRotatef(Math.max(-maxTurnAngle,Math.min(maxTurnAngle,vel*turnAmplifier )), 0, 1, 0);
-      shipMesh_base.render(PrimitiveType.Triangles);
+			float vel=ship.position.x-shippos;
+		  	gl.glRotatef(Math.max(-maxTurnAngle,Math.min(maxTurnAngle,vel*turnAmplifier )), 0, 1, 0);
+      		shipMesh_base.render(PrimitiveType.Triangles);
 			shipMesh_tail.render(PrimitiveType.Triangles);
 
-      shippos = ship.position.x;
+			shippos = ship.position.x;
 		}
 		gl.glPopMatrix();
 	}
@@ -271,17 +266,16 @@ public class Renderer
 	
 	public void dispose()
 	{
-		//shipTexture.dispose();
-		//backgroundTexture.dispose();
+		backgroundTexture.dispose();
 		//explosionTexture.dispose();
 		font.dispose();
 		text.dispose();
 		//explosionMesh.dispose();
 		shipMesh_base.dispose();
 		shipMesh_tail.dispose();
-    shipOpponentMesh_base.dispose();
-    shipOpponentMesh_tail.dispose();
-		//shotMesh.dispose();
-		//backgroundMesh.dispose();
+		shipOpponentMesh_base.dispose();
+		shipOpponentMesh_tail.dispose();
+		shotMesh.dispose();
+		backgroundMesh.dispose();
 	}
 }
