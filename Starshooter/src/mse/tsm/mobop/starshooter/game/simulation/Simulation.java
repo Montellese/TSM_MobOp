@@ -26,7 +26,7 @@ public class Simulation extends Thread implements Serializable
 	private Com com;
 	private float lastTransmittedPosition=10;
 	
-	public Simulation(Context ctx, Com comu )
+	public Simulation(Context ctx, Com comu)
 	{
 		populate();
 		com = comu;
@@ -54,6 +54,16 @@ public class Simulation extends Thread implements Serializable
 	
 	private void updateShots(float delta)
 	{
+		// Don't draw any shots
+		if (ship.isExploding || shipOpponent.isExploding)
+		{
+			removedShots.addAll(shots);
+			shots.clear();
+			shipShot = null;
+			shipOpponentShot = null;
+			return;
+		}
+		
 		removedShots.clear();
 		for (int i = 0; i < shots.size(); i++)
 		{
@@ -116,33 +126,6 @@ public class Simulation extends Thread implements Serializable
 			for (int i = 0; i < removedShots.size(); i++)		
 				shots.remove(removedShots.get(i));
 		}
-		
-		/* Not handling oppponent on this device
-		if (!shipOpponent.isExploding)
-		{
-			for (int i = 0; i < shots.size(); i++)
-			{
-				Shot shot = shots.get(i);
-				if (shot.isOpponentShot)
-					continue;											
-				
-				if (shipOpponent.position.distance(shot.position) < Ship.SHIP_RADIUS)
-				{					
-					removedShots.add(shot);
-					shot.hasLeftField = true;
-					shipOpponent.lives--;
-					shipOpponent.isExploding = true;
-					explosions.add(new Explosion(shipOpponent.position));
-					if (listener != null)
-						listener.explosion();
-					break;
-				}			
-			}
-		
-			for (int i = 0; i < removedShots.size(); i++)		
-				shots.remove(removedShots.get(i));
-		}
-    */
 	}
 	
 	public void moveShipLeft(boolean me, float delta, float scale) 
@@ -191,6 +174,10 @@ public class Simulation extends Thread implements Serializable
 	
 	public void shot(boolean me) 
 	{	
+		// We don't allow shooting while a ship is exploding
+		if (ship.isExploding || shipOpponent.isExploding)
+			return;
+		
 		Ship curShip = me ? ship : shipOpponent;
 		Shot curShot = me ? shipShot : shipOpponentShot;
 		
@@ -198,10 +185,10 @@ public class Simulation extends Thread implements Serializable
 		{
 			curShot = new Shot(curShip.position, !me);
 			shots.add(curShot);
-			if( listener != null )
+			if (listener != null)
 				listener.shot();
-			if(me)
-			  com.sendShot(curShip.position.x);
+			if (me)
+				com.sendShot(curShip.position.x);
 		}
 	}		
 	
@@ -216,12 +203,12 @@ public class Simulation extends Thread implements Serializable
 	
 	public void looseLife(boolean me)
 	{
-    Ship curShip = me ? ship : shipOpponent;
-    
-    curShip.lives--;
-    curShip.isExploding = true;
-    explosions.add(new Explosion(curShip.position));
-    if (listener != null)
-      listener.explosion();
+	    Ship curShip = me ? ship : shipOpponent;
+	    
+	    curShip.lives--;
+	    curShip.isExploding = true;
+	    explosions.add(new Explosion(curShip.position));
+	    if (listener != null)
+	    	listener.explosion();
 	}
 }
