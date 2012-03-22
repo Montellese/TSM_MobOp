@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.opengles.GL10;
 
+import mse.tsm.mobop.starshooter.game.simulation.Explosion;
 import mse.tsm.mobop.starshooter.game.simulation.Ship;
 import mse.tsm.mobop.starshooter.game.simulation.Shot;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
@@ -102,21 +103,21 @@ public class Renderer
 			backgroundMesh.texCoord(0, 1);
 			backgroundMesh.vertex(-1, -1, 0);
 			
-			/*explosionMesh = new Mesh(gl, 4 * 16, false, true, false);
+			explosionMesh = new Mesh(gl, 4 * 16, false, true, false);
 			for (int row = 0; row < 4; row++)
 			{
 				for (int column = 0; column < 4; column++)
 				{
 					explosionMesh.texCoord(0.25f + column * 0.25f, 0 + row * 0.25f);
-					explosionMesh.vertex(1, 1, 0 );
+					explosionMesh.vertex(1, 1, 0);
 					explosionMesh.texCoord(0 + column * 0.25f, 0 + row * 0.25f);
-					explosionMesh.vertex(-1, 1, 0 );
+					explosionMesh.vertex(-1, 1, 0);
 					explosionMesh.texCoord(0f + column * 0.25f, 0.25f + row * 0.25f);
-					explosionMesh.vertex(-1, -1, 0 );
+					explosionMesh.vertex(-1, -1, 0);
 					explosionMesh.texCoord(0.25f + column * 0.25f, 0.25f + row * 0.25f);
 					explosionMesh.vertex(1, -1, 0);		
 				}
-			}*/				
+			}			
 		}
 		catch (Exception ex)
 		{
@@ -129,9 +130,9 @@ public class Renderer
 			backgroundTexture = new Texture(gl, bitmap, TextureFilter.MipMap, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
 			bitmap.recycle();
 						
-			/*bitmap = BitmapFactory.decodeStream(activity.getAssets().open("explode.png"));
+			bitmap = BitmapFactory.decodeStream(activity.getAssets().open("explode.png"));
 			explosionTexture = new Texture(gl, bitmap, TextureFilter.MipMap, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
-			bitmap.recycle();*/
+			bitmap.recycle();
 		}
 		catch( Exception ex )
 		{
@@ -158,8 +159,8 @@ public class Renderer
 		renderShip(gl, simulation.ship, activity);
 		renderShip(gl, simulation.shipOpponent, activity);
 		
-		//gl.glEnable(GL10.GL_TEXTURE_2D);
-		// TODO: renderExplosions(gl, simulation.explosions);
+		gl.glEnable(GL10.GL_TEXTURE_2D);
+		renderExplosions(gl, simulation.explosions);
 		
 		set2DProjection(gl, activity);
 		
@@ -248,7 +249,7 @@ public class Renderer
 		}
 	}
 	
-	/*private void renderExplosions(GL10 gl, ArrayList<Explosion> explosions) 
+	private void renderExplosions(GL10 gl, ArrayList<Explosion> explosions) 
 	{	
 		gl.glEnable(GL10.GL_BLEND);
 		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
@@ -257,20 +258,20 @@ public class Renderer
 		{
 			Explosion explosion = explosions.get(i);
 			gl.glPushMatrix();
-			gl.glTranslatef(explosion.position.x, explosion.position.y, explosion.position.z);
+			gl.glTranslatef(explosion.position.x, explosion.position.y, 1.0f);
 			explosionMesh.render(PrimitiveType.TriangleFan, (int)((explosion.aliveTime / Explosion.EXPLOSION_LIVE_TIME) * 15) * 4, 4);
 			gl.glPopMatrix();
 		}			
 		gl.glDisable(GL10.GL_BLEND);
-	}*/
+	}
 	
 	public void dispose()
 	{
 		backgroundTexture.dispose();
-		//explosionTexture.dispose();
+		explosionTexture.dispose();
 		font.dispose();
 		text.dispose();
-		//explosionMesh.dispose();
+		explosionMesh.dispose();
 		shipMesh_base.dispose();
 		shipMesh_tail.dispose();
 		shipOpponentMesh_base.dispose();
