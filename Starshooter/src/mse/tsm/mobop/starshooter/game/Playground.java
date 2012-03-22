@@ -101,7 +101,7 @@ public class Playground extends GameActivity implements GameListener, Runnable
 	public void run()
 	{
 	    // setup communication
-	    if( isMaster )
+	    if (isMaster)
 	    {
 	    	Server.startServer(StarshooterMain.comPort,this.getApplicationContext(),this);
 	    }
@@ -118,9 +118,7 @@ public class Playground extends GameActivity implements GameListener, Runnable
 		screen.render(gl, activity);
 		
 		if (screen instanceof StartScreen && com != null && com.connectionSetup())
-	    {
-	      ((StartScreen)screen).isDone = true;
-	    }
+			((StartScreen)screen).isDone = true;
 		
 		if (screen.isDone())
 		{

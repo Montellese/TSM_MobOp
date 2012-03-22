@@ -44,7 +44,7 @@ public class StartScreen implements GameScreen
 
 	public void update(GameActivity activity) 
 	{
-		// TODO: Update when both players are ready
+		// Nothing to do here as it is updated by the communication
 		/*if (activity.isTouched())
 			isDone = true;*/
 	}
@@ -59,12 +59,12 @@ public class StartScreen implements GameScreen
 		gl.glMatrixMode(GL10.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		
-		gl.glEnable( GL10.GL_BLEND );
-		gl.glBlendFunc( GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA );
+		gl.glEnable(GL10.GL_BLEND);
+		gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		
-		gl.glMatrixMode( GL10.GL_PROJECTION );
-		GLU.gluOrtho2D( gl, 0, activity.getViewportWidth(), 0, activity.getViewportHeight() );
-		gl.glMatrixMode( GL10.GL_MODELVIEW );
+		gl.glMatrixMode(GL10.GL_PROJECTION);
+		GLU.gluOrtho2D(gl, 0, activity.getViewportWidth(), 0, activity.getViewportHeight());
+		gl.glMatrixMode(GL10.GL_MODELVIEW );
 		gl.glLoadIdentity();
 
 	    gl.glLoadIdentity();
