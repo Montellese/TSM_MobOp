@@ -11,8 +11,14 @@ public class Shot implements Serializable
 
 	public Shot(Vector position, boolean isOpponentShot)
 	{
-		this.position.set( position );
+		this.position.set(position);
 		this.isOpponentShot = isOpponentShot;
+
+		// Make sure the shot is not drawn below the ship
+		if (isOpponentShot)
+			this.position.y -= Ship.SHIP_RADIUS / 2;
+		else
+			this.position.y += Ship.SHIP_RADIUS / 2;
 	}
 	
 	public void update(float delta) 
