@@ -4,9 +4,11 @@ import java.io.*;
 import java.net.Socket;
 
 import mse.tsm.mobop.starshooter.game.Playground;
+import mse.tsm.mobop.starshooter.game.screens.GameLoop;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Server extends Com
@@ -14,7 +16,6 @@ public class Server extends Com
   private Socket socket = null;
   private static boolean serverRunning=false;
   private static ServerSocket serverSocket = null;
-  public static Server firstInstance;
   
   private Server(Socket socket, Context ctx)
   {
@@ -28,33 +29,35 @@ public class Server extends Com
       try{
         serverSocket.close();
       } catch (IOException e) { }
-    firstInstance = null;
   }
   
-  public static boolean startServer(int port, Context context, Playground pg)
+  
+  public static Server startServer(int port, Context context)
   {
+    Server myInstance=null;
+    
     try
     {
       serverSocket = new ServerSocket(port);
     } 
     catch (IOException e)
     {
-      handleError(e,"COM-SERVER: Listening on port "+port+".");
+      Log.e("Com-Server", "Error while listening on port "+port+": "+e.toString() );
     }
     
     try
     {
-      firstInstance = new Server(serverSocket.accept(),context);
-      firstInstance.start();
-      pg.com = firstInstance;
+      myInstance = new Server(serverSocket.accept(),context);
+      myInstance.start();
     }
     catch( SocketException e )
     {}
     catch( IOException e )
     {
-      handleError(e,"SERVER: IO ERROR: ");
+      Log.e("Com-Server", "IO Error: "+e.toString() );
     }
-    return true;
+    
+    return myInstance;
   }
   
   public void run()
@@ -89,6 +92,9 @@ public class Server extends Com
         break;
       }
       connectionIsSetup=false;
+      // connection lost?
+      if( kkp.gameIsRunning() )
+        this.comLost();
       out.close();
       in.close();
       socket.close();
@@ -133,10 +139,6 @@ public class Server extends Com
     return serverRunning;
   }
 
-  private static void handleError(Exception e, String txt)
-  {
-    Toast.makeText(ctx, txt+"\n"+e.toString(), Toast.LENGTH_SHORT).show();
-  }
 
 }
 

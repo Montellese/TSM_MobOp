@@ -10,6 +10,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import mse.tsm.mobop.starshooter.R;
 import mse.tsm.mobop.starshooter.StarshooterMain;
+import mse.tsm.mobop.starshooter.game.screens.ErrorScreen;
 import mse.tsm.mobop.starshooter.game.screens.GameLoop;
 import mse.tsm.mobop.starshooter.game.screens.GameOverScreen;
 import mse.tsm.mobop.starshooter.game.screens.GameScreen;
@@ -35,7 +36,7 @@ public class Playground extends GameActivity implements GameListener, Runnable
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
-  	{
+  {
 		this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// go fullscreen
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -68,20 +69,20 @@ public class Playground extends GameActivity implements GameListener, Runnable
 	}
     
     @Override
-    protected void onPause()
-    {
-        super.onPause();
-        if (screen != null)
-        	screen.dispose();
-        if (screen instanceof GameLoop)
-        	simulation = ((GameLoop)screen).simulation;
-    }
-    
-    @Override
-    protected void onResume() 
-    {
-        super.onResume();
-    }
+  protected void onPause()
+  {
+    super.onPause();
+    if (screen != null)
+    	screen.dispose();
+    if (screen instanceof GameLoop)
+    	simulation = ((GameLoop)screen).simulation;
+  }
+  
+  @Override
+  protected void onResume() 
+  {
+    super.onResume();
+  }
 
 	public void setup(GameActivity activity, GL10 gl) 
 	{
@@ -93,22 +94,23 @@ public class Playground extends GameActivity implements GameListener, Runnable
 		else
 		{
 			screen = new StartScreen(gl, activity, additionalText);
-			Thread t=new Thread(this);
+			
+	    Thread t=new Thread(this);
 			t.start();
 		}
 	}
-
+	
 	public void run()
 	{
 	    // setup communication
 	    if (isMaster)
 	    {
-	    	Server.startServer(StarshooterMain.comPort,this.getApplicationContext(),this);
+	    	com = Server.startServer(StarshooterMain.comPort,this.getApplicationContext());
 	    }
 	    else
 	    {
 	    	com = new Client(masterSip, StarshooterMain.comPort, this);
-	    	com.start();
+	    	com.run(); // Not start since we are already in a new thread
 	    }
 	}
 	
@@ -117,7 +119,8 @@ public class Playground extends GameActivity implements GameListener, Runnable
 		screen.update(activity);
 		screen.render(gl, activity);
 		
-		if (screen instanceof StartScreen && com != null && com.connectionSetup())
+		
+		if (screen instanceof StartScreen && com != null && com.connectionSetup() && com.gameIsRunning() )
 			((StartScreen)screen).isDone = true;
 		
 		if (screen.isDone())
@@ -125,14 +128,28 @@ public class Playground extends GameActivity implements GameListener, Runnable
 			screen.dispose();
 			
 			if (screen instanceof StartScreen)
+			{
 				screen = new GameLoop(gl, activity, com);
+			}
 			else if (screen instanceof GameLoop)
 			{
-				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.ship.lives > 0);
-				com = null;
+			  String msg = ((GameLoop) screen).getErrorMsg();
+			  if ( msg.length() != 0 )
+			  {
+	        screen = new ErrorScreen(gl, activity, msg);
+	        //com = null;
+			  }
+			  else
+			  {
+  				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.ship.lives > 0);
+  				//com = null;
+			  }
 			}
 			else if (screen instanceof GameOverScreen)
+			{
+			  com.launchNewGame();
 				screen = new StartScreen(gl, activity);
+			}
 		}
 		  
 		

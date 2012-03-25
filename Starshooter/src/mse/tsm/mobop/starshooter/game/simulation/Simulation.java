@@ -110,11 +110,11 @@ public class Simulation extends Thread implements Serializable
 					continue;											
 				
 				if (ship.position.distance(shot.position) < Ship.SHIP_RADIUS)
-				{					
-				  com.sendMinusOneLife();
+				{	
 					removedShots.add(shot);
 					shot.hasLeftField = true;
 					ship.lives--;
+          com.sendMinusOneLife();
 					ship.isExploding = true;
 					explosions.add(new Explosion(ship.position));
 					if (listener != null)
@@ -201,7 +201,12 @@ public class Simulation extends Thread implements Serializable
 	  }
 	}
 	
-	public void looseLife(boolean me)
+	/** Decimates a ships lifes and reports if a ship has entirely been destroyed
+	 * 
+	 * @param me   true if its our ship otherwhise false
+	 * @return     true if ship is fully destroyed now
+	 */
+	public boolean looseLife(boolean me)
 	{
 	    Ship curShip = me ? ship : shipOpponent;
 	    
@@ -210,5 +215,15 @@ public class Simulation extends Thread implements Serializable
 	    explosions.add(new Explosion(curShip.position));
 	    if (listener != null)
 	    	listener.explosion();
+	    
+	    return curShip.lives<=0;
 	}
+	
+	public boolean isDead(boolean me)
+	{
+    Ship curShip = me ? ship : shipOpponent;
+
+    return curShip.lives<=0;
+	}
+	
 }

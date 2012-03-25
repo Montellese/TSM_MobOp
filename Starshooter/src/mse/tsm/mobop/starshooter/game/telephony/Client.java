@@ -3,10 +3,12 @@ package mse.tsm.mobop.starshooter.game.telephony;
 import java.io.*;
 import java.net.*;
 
+import mse.tsm.mobop.starshooter.game.screens.GameLoop;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
 
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 public class Client extends Com
@@ -36,7 +38,7 @@ public class Client extends Com
     }
     catch(Exception e)
     {
-      handleError(e,"COM-CLIENT: thread start");
+      Log.e("Com-Client", "Error in Thread: "+e.toString() );
     }
   }
   
@@ -58,12 +60,12 @@ public class Client extends Com
     }
     catch (UnknownHostException e)
     {
-      handleError(e,"COM-CLIENT: Host unknown: `"+serverIP+"`");
+      Log.e("Com-Client", "Host unknown: `"+serverIP+"`: "+e.toString() );
       return;
     }
     catch (IOException e)
     {
-      handleError(e,"COM-CLIENT: Couldn't get I/O for the connection to: "+serverIP+":"+port+".");
+      Log.e("Com-Client", "Couldn't get I/O for the connection to: "+serverIP+":"+port+": "+e.toString() );
       return;
     }
   
@@ -86,6 +88,8 @@ public class Client extends Com
       }
       connectionIsSetup = kkp.getConnectionSetUp();
     }
+    if( connectionIsSetup )
+      comLost();
     disconnect();
     out.close();
     in.close();
@@ -94,11 +98,6 @@ public class Client extends Com
     runningThreads--;
     if( runningThreads == 0 )
       run=false;
-  }
-  
-  private void handleError(Exception e, String txt)
-  {
-    Toast.makeText(ctx, txt+"\n"+e.toString(), Toast.LENGTH_SHORT).show();
   }
   
   public void disconnect()

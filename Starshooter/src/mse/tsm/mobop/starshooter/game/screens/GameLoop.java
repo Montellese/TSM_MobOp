@@ -13,6 +13,8 @@ public class GameLoop implements GameScreen, SimulationListener
 	public Simulation simulation;
 	Renderer renderer;	
 	
+	protected String errorMsg = "";
+	
 	boolean wasTouched = false;
 
 	public GameLoop(GL10 gl, GameActivity activity, Com com)
@@ -20,6 +22,7 @@ public class GameLoop implements GameScreen, SimulationListener
 		simulation = new Simulation(activity.getApplicationContext(), com);
 		simulation.listener = this;
 		renderer = new Renderer(gl, activity);
+		com.gl = this;
 	}
 	
 	public GameLoop(GL10 gl, GameActivity activity, Simulation simulation) 
@@ -59,7 +62,7 @@ public class GameLoop implements GameScreen, SimulationListener
 
 	public boolean isDone()
 	{
-		return simulation.ship.lives == 0 || simulation.shipOpponent.lives == 0;
+		return simulation.ship.lives == 0 || simulation.shipOpponent.lives == 0 || errorMsg.length()>0;
 	}
 	
 	public void dispose()
@@ -76,4 +79,15 @@ public class GameLoop implements GameScreen, SimulationListener
 	{	
 		// Nothing to be done
 	}
+
+
+	public String getErrorMsg()
+  {
+    return errorMsg;
+  }
+
+  public void setErrorMsg(String errorMsg)
+  {
+    this.errorMsg = errorMsg;
+  }
 }

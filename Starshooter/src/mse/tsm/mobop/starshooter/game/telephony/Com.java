@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import mse.tsm.mobop.starshooter.game.screens.GameLoop;
 import mse.tsm.mobop.starshooter.game.simulation.Simulation;
 import android.content.Context;
+import android.util.Log;
+import android.widget.Toast;
 
 public abstract class Com extends Thread
 {
@@ -15,11 +18,8 @@ public abstract class Com extends Thread
   protected Rprotocoll kkp;
   protected PrintWriter out = null;
   protected BufferedReader in;
+  public GameLoop gl;
   
-  protected Com(Context ctx)
-  {
-    this(ctx,"unkwn");
-  }
   
   protected Com(Context ctx,String threadname)
   {
@@ -31,11 +31,20 @@ public abstract class Com extends Thread
   {
     Com.sim=sim;
     kkp.sim = sim;
+    Log.d("Com","Connected");
   }
   
   public boolean connectionSetup()
   {
     return connectionIsSetup;
+  }
+  
+  public void comLost()
+  {
+    kkp.gameFinished();
+
+    gl.setErrorMsg("Connection lost");
+    Log.w("Com", "Connection lost");
   }
 
   public void setPos(float pos)
@@ -54,5 +63,21 @@ public abstract class Com extends Thread
   {
     if(out!=null && connectionSetup() )
       out.println(kkp.sendMinusOneLife());
+  }
+
+  public void showError(String msg)
+  {
+    gl.setErrorMsg(msg);
+  }
+  
+  public void launchNewGame()
+  {
+    if(out!=null /*&& connectionSetup()*/ )
+      out.println(kkp.launchNewGame());
+  }
+
+  public boolean gameIsRunning()
+  {
+    return kkp.gameIsRunning();
   }
 }

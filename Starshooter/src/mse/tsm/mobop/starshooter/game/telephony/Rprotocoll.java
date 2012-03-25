@@ -13,9 +13,16 @@ public class Rprotocoll
 {
   /** tell us where we are in the protocol **/
   private int state = 0;
+
   private Context ctx;
   public Simulation sim;
+  private boolean isMaster = false;
   private Boolean connectionSetUp=false;
+  public static final int gameOverPaused = 2;
+  public static final int gameOverPausedOtherIsReady = 3;
+  public static final int gameOverWeAreReady = 4;
+  public static final int gameRunning = 1;
+  public static final int gameNotRunning = 0;
   
 
 
@@ -39,6 +46,7 @@ public class Rprotocoll
     if( theInput == null )
       try
       {
+        isMaster = true;
         return "HLO SRV "+ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName;
       } catch (NameNotFoundException e1)
       {
@@ -71,7 +79,7 @@ public class Rprotocoll
     else
       switch(state)
       {
-        case 0 :
+        case gameNotRunning :
           if( prefix.equals("HLO") && command.equals("CLT") )
           {
             try
@@ -90,7 +98,7 @@ public class Rprotocoll
             }
           }
           break;
-        case 1 :
+        case gameRunning :
           if( prefix.equals("SET") )
           {
             // receive ship position
@@ -115,8 +123,11 @@ public class Rprotocoll
             // ship destroyed
             else if( command.equals("DST") )
             {
-              if(sim!=null)
-                sim.looseLife(false);
+              if(sim!=null && sim.looseLife(false) )
+              {
+                // ship fully destroyed
+                gameOverPause();
+              }
               theOutput="SET OK!";
             }
             // answer ok
@@ -126,6 +137,40 @@ public class Rprotocoll
             }
           }
           break;          
+        case gameOverPaused :
+          if( prefix.equals("PSE") )
+          {
+            // receive ship position
+            if( command.equals("RDY") )
+            {
+              state = gameOverPausedOtherIsReady;
+              theOutput="SET OK!";
+            }
+          }
+          else if( prefix.equals("SET") )
+          {
+            //if( command.equals("OK!") )
+            //{
+              theOutput=null;
+            //}
+          }
+          break;
+        case gameOverPausedOtherIsReady :
+          theOutput = null;
+          break;
+        case gameOverWeAreReady:
+          if( prefix.equals("PSE") )
+          {
+            // start immediately
+            if( command.equals("SRT") )
+            {
+              state = gameRunning;
+              theOutput=null;
+            }
+          }
+          else
+            theOutput = null;
+          break;
         default:
           theOutput="BYE";
           break;
@@ -133,7 +178,6 @@ public class Rprotocoll
     
     return theOutput;
   }
-  
   
   public String processClientInput(String theInput)
   {
@@ -156,7 +200,7 @@ public class Rprotocoll
     else
       switch(state)
       {
-        case 0 :
+        case gameNotRunning :
           if( prefix.equals("HLO") && command.equals("SRV") )
           {
             try
@@ -174,9 +218,16 @@ public class Rprotocoll
               e.printStackTrace();
             }
           }
+          else if( prefix.equals("SET"))
+          {
+            /*if( command.equals("OK!") )
+            {*/
+              theOutput = null;
+            //}
+          }
           break;
 
-        case 1 :
+        case gameRunning :
           if( prefix.equals("SET") )
           {
             // receive ship position
@@ -201,8 +252,11 @@ public class Rprotocoll
             // ship destroyed
             else if( command.equals("DST") )
             {
-              if(sim!=null)
-                sim.looseLife(false);
+              if(sim!=null && sim.looseLife(false) )
+              {
+                // ship fully destroyed
+                gameOverPause();
+              }
               theOutput="SET OK!";
             }
             // answer ok
@@ -214,7 +268,41 @@ public class Rprotocoll
           {
             theOutput=null;
           }
-          break;          
+          break;
+          case gameOverPaused :
+            if( prefix.equals("PSE") )
+            {
+              // receive ship position
+              if( command.equals("RDY") )
+              {
+                state = gameOverPausedOtherIsReady;
+                theOutput="SET OK!";
+              }
+            }
+            else if( prefix.equals("SET") )
+            {
+              //if( command.equals("OK!") )
+              //{
+                theOutput=null;
+              //}
+            }
+            break;
+          case gameOverPausedOtherIsReady :
+            theOutput = null;
+            break;
+          case gameOverWeAreReady:
+            if( prefix.equals("PSE") )
+            {
+              // start immediately
+              if( command.equals("SRT") )
+              {
+                state = gameRunning;
+                theOutput=null;
+              }
+            }
+            else
+              theOutput = null;
+            break;
         default:
           theOutput="BYE";
           break;
@@ -223,6 +311,11 @@ public class Rprotocoll
     return theOutput;
   }
   
+  public void gameFinished()
+  {
+    connectionSetUp = false;
+    state = gameNotRunning;
+  }
   
   public String sendPos(float pos)
   {
@@ -236,8 +329,35 @@ public class Rprotocoll
 
   public String sendMinusOneLife()
   {
+    if( sim.isDead(true) )
+    {
+      state=gameOverPaused;
+    }
     return "SET DST";
   }
 
+  public String launchNewGame()
+  {
+    if( state == gameOverPausedOtherIsReady )
+    {
+      state = gameRunning;
+      return "PSE SRT";
+    }
+    else
+    {
+      state = gameOverWeAreReady;
+      return "PSE RDY";
+    }
+  }
+
   
+  public boolean gameIsRunning()
+  {
+    return (state == gameRunning);
+  }
+
+  public void gameOverPause()
+  {
+    state = gameOverPaused;
+  }
 }
