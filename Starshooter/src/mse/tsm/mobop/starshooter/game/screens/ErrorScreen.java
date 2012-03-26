@@ -22,11 +22,11 @@ public class ErrorScreen implements GameScreen
   public ErrorScreen(GL10 gl, GameActivity activity, String msg)
   {     
     textEnd = msg;
-    font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 48, FontStyle.Plain);
+    font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 24, FontStyle.Plain);
     text = font.newText(gl);
     text.setText(textEnd);
     
-    fontSmall = new Font(gl, activity.getAssets(), "Battlev2.ttf", 24, FontStyle.Plain);
+    fontSmall = new Font(gl, activity.getAssets(), "Battlev2.ttf", 22, FontStyle.Plain);
     textSmall = fontSmall.newText(gl);
     textSmall.setText(textTouch);
   } 

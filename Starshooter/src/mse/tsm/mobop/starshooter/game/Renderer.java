@@ -37,6 +37,7 @@ public class Renderer
 	float shippos=0.0f, opponenshippos=0.0f;
 	static final float maxTurnAngle=75f;
 	static final float turnAmplifier=450f;
+	static final float explosionSize=0.7f;
 	
 	Font font;
 	Text text;
@@ -109,13 +110,13 @@ public class Renderer
 				for (int column = 0; column < 4; column++)
 				{
 					explosionMesh.texCoord(0.25f + column * 0.25f, 0 + row * 0.25f);
-					explosionMesh.vertex(1, 1, 0);
+					explosionMesh.vertex(explosionSize, explosionSize, 0);
 					explosionMesh.texCoord(0 + column * 0.25f, 0 + row * 0.25f);
-					explosionMesh.vertex(-1, 1, 0);
+					explosionMesh.vertex(-explosionSize, explosionSize, 0);
 					explosionMesh.texCoord(0f + column * 0.25f, 0.25f + row * 0.25f);
-					explosionMesh.vertex(-1, -1, 0);
+					explosionMesh.vertex(-explosionSize, -explosionSize, 0);
 					explosionMesh.texCoord(0.25f + column * 0.25f, 0.25f + row * 0.25f);
-					explosionMesh.vertex(1, -1, 0);		
+					explosionMesh.vertex(explosionSize, -explosionSize, 0);		
 				}
 			}			
 		}
