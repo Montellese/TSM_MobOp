@@ -19,7 +19,7 @@ public class GameLoop implements GameScreen, SimulationListener
 
 	public GameLoop(GL10 gl, GameActivity activity, Com com)
 	{
-		simulation = new Simulation(activity.getApplicationContext(), com);
+		simulation = new Simulation(com);
 		simulation.listener = this;
 		renderer = new Renderer(gl, activity);
 		com.gl = this;

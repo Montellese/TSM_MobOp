@@ -22,16 +22,14 @@ public class Simulation extends Thread implements Serializable
 	private ArrayList<Shot> removedShots = new ArrayList<Shot>();
 	private ArrayList<Explosion> removedExplosions = new ArrayList<Explosion>( );
 	
-	private Context ctx;
 	private Com com;
 	private float lastTransmittedPosition=10;
 	
-	public Simulation(Context ctx, Com comu)
+	public Simulation(Com comu)
 	{
 		populate();
 		com = comu;
 		com.registerSimulation(this);
-		this.ctx = ctx;
 	}
 	
 	
