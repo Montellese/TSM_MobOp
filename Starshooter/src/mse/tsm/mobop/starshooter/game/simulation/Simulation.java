@@ -3,12 +3,15 @@ package mse.tsm.mobop.starshooter.game.simulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import android.content.Context;
 import mse.tsm.mobop.starshooter.game.telephony.*;
 
 public class Simulation extends Thread implements Serializable
 {		
-	public final static float PLAYFIELD_MIN_X = -0.5f;
+	/**
+   * 
+   */
+  private static final long serialVersionUID = 7801873743028773473L;
+  public final static float PLAYFIELD_MIN_X = -0.5f;
 	public final static float PLAYFIELD_MAX_X = 0.5f;
 	public final static float PLAYFIELD_MIN_Y = -1f;
 	public final static float PLAYFIELD_MAX_Y = 1f;

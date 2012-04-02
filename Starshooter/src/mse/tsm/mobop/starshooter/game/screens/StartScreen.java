@@ -29,6 +29,7 @@ public class StartScreen implements GameScreen
 	    textTop2 = font.newText(gl);   textTop2.setText(textWaitingTop2);
 	    textBottom = font.newText(gl); textBottom.setText(textWaitingBottom);
 	    textBottom2 = font.newText(gl);textBottom2.setText(textWaitingBottom2);
+
 	}
   
 	

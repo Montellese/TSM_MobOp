@@ -1,7 +1,11 @@
 package mse.tsm.mobop.starshooter;
 
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +20,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -302,16 +307,18 @@ public class StarshooterMain extends Activity
       WifiInfo wifiInfo = wifiManager.getConnectionInfo();
       int ip = wifiInfo.getIpAddress();
       String ipString = String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
-      return ipString;
+      
+      if( !ipString.equals("0.0.0.0"))
+        return ipString;
     }
     catch(Exception e)
     {
       Toast toast = Toast.makeText( getApplicationContext(), getResources().getString(R.string.wifiman_err_rights), Toast.LENGTH_SHORT);
       toast.show();
     }
-    return getResources().getString(R.string.wifi_err_ip);
+    //return getResources().getString(R.string.wifi_err_ip);
     
-    /*get IP from all devices: 
+    //get IP from all devices: 
     try
     {
       for (Enumeration<NetworkInterface> en = NetworkInterface
@@ -329,9 +336,10 @@ public class StarshooterMain extends Activity
       }
     } catch (SocketException ex)
     {
-      Log.e(Log.ERROR, ex.toString());
+      Log.e("Starshooter", ex.toString());
     }
-    return null;*/
+    return getResources().getString(R.string.wifi_err_ip);
+     //return null;
   }
   
   //@Override

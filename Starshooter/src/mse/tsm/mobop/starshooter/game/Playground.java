@@ -136,13 +136,12 @@ public class Playground extends GameActivity implements GameListener, Runnable
 			  String msg = ((GameLoop) screen).getErrorMsg();
 			  if ( msg.length() != 0 )
 			  {
-	        screen = new ErrorScreen(gl, activity, msg);
-	        //com = null;
+	        screen = new ErrorScreen(gl, activity, msg, this.getViewportWidth());
+	        com.destroy();
 			  }
 			  else
 			  {
-  				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.ship.lives > 0);
-  				//com = null;
+  				screen = new GameOverScreen(gl, activity, ((GameLoop)screen).simulation.ship.lives > 0, this.getViewportWidth() );
 			  }
 			}
 			else if (screen instanceof GameOverScreen)

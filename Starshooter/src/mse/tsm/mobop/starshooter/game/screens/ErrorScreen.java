@@ -19,14 +19,14 @@ public class ErrorScreen implements GameScreen
   String textEnd = "";
   String textTouch = "Touch to continue";
   
-  public ErrorScreen(GL10 gl, GameActivity activity, String msg)
-  {     
+  public ErrorScreen(GL10 gl, GameActivity activity, String msg, int width)
+  {
     textEnd = msg;
-    font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 24, FontStyle.Plain);
+    font = new Font(gl, activity.getAssets(), "Battlev2.ttf", width/20 /*24*/, FontStyle.Plain);
     text = font.newText(gl);
     text.setText(textEnd);
     
-    fontSmall = new Font(gl, activity.getAssets(), "Battlev2.ttf", 22, FontStyle.Plain);
+    fontSmall = new Font(gl, activity.getAssets(), "Battlev2.ttf", width/22 /*22*/, FontStyle.Plain);
     textSmall = fontSmall.newText(gl);
     textSmall.setText(textTouch);
   } 

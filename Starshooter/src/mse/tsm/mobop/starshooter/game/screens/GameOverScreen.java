@@ -19,14 +19,14 @@ public class GameOverScreen implements GameScreen
 	String textEnd;
 	String textTouch = "Touch to continue";
 	
-	public GameOverScreen(GL10 gl, GameActivity activity, boolean won)
+	public GameOverScreen(GL10 gl, GameActivity activity, boolean won, int width)
 	{			
-		font = new Font(gl, activity.getAssets(), "Battlev2.ttf", 48, FontStyle.Plain);
+		font = new Font(gl, activity.getAssets(), "Battlev2.ttf", width/10 /*48*/, FontStyle.Plain);
 		text = font.newText(gl);
 		textEnd = "You " + (won ? "won" : "lost") + "!";
 		text.setText(textEnd);
 		
-		fontSmall = new Font(gl, activity.getAssets(), "Battlev2.ttf", 24, FontStyle.Plain);
+		fontSmall = new Font(gl, activity.getAssets(), "Battlev2.ttf", width/20 /*24*/, FontStyle.Plain);
 		textSmall = fontSmall.newText(gl);
 		textSmall.setText(textTouch);
 	}	
